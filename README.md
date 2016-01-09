@@ -17,10 +17,9 @@ Work in progress. Currently non-functional.
 TODO
 ====
 
+* Header comments
 * Drop the menu surfaces from the asset tracker?
-* Drop the weird beejeye graphic
-* Game state skeleton
-* Game pause menu
+* Move shared assets to sharedassetmanager
 * Chicken
 * Eggs
 * Nest
@@ -30,9 +29,11 @@ TODO
 * Sound system
 * Cel animation in the entities
 * Record programmer soundfx
-* Asset location code
+* Asset location code for binary install
 * Joystick
+* Mouse capture?
 * Fullscreen mode
 * Window resizes?
 * Windows port
 * OSX port
+* Transitions between main states?

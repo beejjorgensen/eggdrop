@@ -7,16 +7,11 @@ import (
 	"github.com/beejjorgensen/eggdrop/gamecontext"
 	"github.com/beejjorgensen/eggdrop/gamemanager"
 	"github.com/beejjorgensen/eggdrop/introstate"
+	"github.com/beejjorgensen/eggdrop/playstate"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_image"
 	"github.com/veandco/go-sdl2/sdl_ttf"
-)
-
-// Global State IDs
-const (
-	IntroStateID = iota
-	GameStateID
 )
 
 func init() {
@@ -73,15 +68,16 @@ func createMainWindow() {
 func main() {
 	sdlInit()
 
-	gm := gamemanager.New()
-	gamecontext.GContext.GameManager = gm
+	gm := gamemanager.GGameManager
 
 	createMainWindow()
 	defer gamecontext.GContext.MainWindow.Destroy()
 
 	intro := &introstate.IntroState{}
+	play := &playstate.PlayState{}
 
-	gm.RegisterMode(IntroStateID, intro)
+	gm.RegisterMode(gamemanager.GameModeIntro, intro)
+	gm.RegisterMode(gamemanager.GameModePlay, play)
 
 	done := false
 
@@ -89,9 +85,9 @@ func main() {
 	mainWindow := gamecontext.GContext.MainWindow
 	mainWindowSurface := gamecontext.GContext.MainSurface
 
-	gm.SetMode(IntroStateID)
+	gm.SetMode(gamemanager.GameModeIntro)
 
-	gm.EventMode = gamemanager.GameManagerEventDriven
+	gm.SetEventMode(gamemanager.GameManagerEventDriven)
 
 	for done == false {
 		event := gm.GetNextEvent()

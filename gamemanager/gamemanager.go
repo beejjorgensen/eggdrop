@@ -17,7 +17,7 @@ type GameMode interface {
 	DidHide()
 }
 
-// Event modes for EventMode
+// Event modes for eventMode
 const (
 	GameManagerEventDriven = iota
 	GameManagerEventTimeoutDriven
@@ -32,10 +32,13 @@ type GameManager struct {
 
 	FrameDelay   uint32
 	EventTimeout int
-	EventMode    int
+	eventMode    int
 
 	prevFrameTime uint32
 }
+
+// GGameManager is the global game manager
+var GGameManager = New()
 
 // New creates a new initialized GameManager
 func New() *GameManager {
@@ -55,12 +58,12 @@ func (g *GameManager) RegisterMode(id int, gm GameMode) {
 
 // SetMode sets the current game mode to the specified value
 func (g *GameManager) SetMode(id int) {
+	g.nextModeID = id
+
 	if g.currentModeID >= 0 {
 		g.modeMap[g.currentModeID].WillHide()
 	}
 	g.modeMap[id].WillShow()
-
-	g.nextModeID = id
 }
 
 // WillShowComplete tells the GameManager it's time to go to the next stage
@@ -111,9 +114,17 @@ func (g *GameManager) DelayToNextFrame() {
 	g.prevFrameTime = curTime
 }
 
-// GetNextEvent returns the next sdl.Event depending on the EventMode
+// SetEventMode sets the event handler mode to polling or event-based
+func (g *GameManager) SetEventMode(eventMode int) {
+	g.eventMode = eventMode
+
+	// Push an empty event to kick out of WaitEvent() or WaitEventTimeout()
+	sdl.PushEvent(&sdl.UserEvent{Type: 0})
+}
+
+// GetNextEvent returns the next sdl.Event depending on the eventMode
 func (g *GameManager) GetNextEvent() sdl.Event {
-	switch g.EventMode {
+	switch g.eventMode {
 	case GameManagerEventDriven:
 		return sdl.WaitEvent()
 	case GameManagerEventTimeoutDriven:
@@ -122,5 +133,5 @@ func (g *GameManager) GetNextEvent() sdl.Event {
 		return sdl.PollEvent()
 	}
 
-	panic(fmt.Sprintf("GetNextEvent: unknown event mode: %d", g.EventMode))
+	panic(fmt.Sprintf("GetNextEvent: unknown event mode: %d", g.eventMode))
 }

@@ -121,6 +121,11 @@ func (m *Menu) updateVisibility() {
 	}
 }
 
+// SetSelected sets the selected item in the menu
+func (m *Menu) SetSelected(i int) {
+	m.selected = i
+}
+
 // GetSelected returns the selected item in the menu
 func (m *Menu) GetSelected() int {
 	return m.selected
