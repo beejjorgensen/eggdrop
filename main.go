@@ -1,5 +1,4 @@
-// Package main sets up the basic SDL window, makes the GameManager, and sets up
-// the main event loop.
+// Eggdrop is an SDL game written for the purposes of learning Go.
 package main
 
 import (
