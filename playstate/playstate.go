@@ -1,3 +1,6 @@
+// Package playstate is responsible for assets and behavior of the actual game
+// itself. This is where the action is. (Also handles the pause menu in the
+// game.)
 package playstate
 
 import (

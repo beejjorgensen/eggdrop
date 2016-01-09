@@ -1,3 +1,5 @@
+// Package main sets up the basic SDL window, makes the GameManager, and sets up
+// the main event loop.
 package main
 
 import (

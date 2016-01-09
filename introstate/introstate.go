@@ -1,3 +1,5 @@
+// Package introstate controls assets and behavior for the initial intro state
+// of the game.
 package introstate
 
 import (

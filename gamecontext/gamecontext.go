@@ -1,3 +1,4 @@
+// Package gamecontext holds global, shared information about the system.
 package gamecontext
 
 import "github.com/veandco/go-sdl2/sdl"

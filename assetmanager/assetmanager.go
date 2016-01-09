@@ -1,3 +1,5 @@
+// Package assetmanager loads assets (images and fonts) so they can be referred
+// to later by ID.
 package assetmanager
 
 import (

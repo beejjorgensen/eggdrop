@@ -1,3 +1,6 @@
+// Package menu renders and controls a text-based menu. There are helper
+// functions to control the position by keyboard or mouse, though the actual
+// event handling takes place outside this package.
 package menu
 
 import (

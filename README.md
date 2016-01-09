@@ -17,7 +17,7 @@ Work in progress. Currently non-functional.
 TODO
 ====
 
-* Header comments
+* Break play state stuff into different files in playstate?
 * Drop the menu surfaces from the asset tracker?
 * Move shared assets to sharedassetmanager
 * Chicken

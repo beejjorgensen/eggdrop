@@ -1,3 +1,8 @@
+// Package scenegraph is a simple hierarchical scene graph, and declares an
+// Entity type that associates an entity with a surface.
+//
+// The EntityTransform type is currently cheesy, but could eventually be
+// replaced by something more appropriate (e.g. a matrix).
 package scenegraph
 
 import (

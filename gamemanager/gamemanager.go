@@ -1,3 +1,10 @@
+// Package gamemanager tracks the current state of the game. States are
+// registered in advance, and satisfy the GameMode interface. When states are
+// changed, the old and new states are called with appropriate notifcations so
+// they can prepare for the change.
+//
+// Also can execute the frame delay, and poll for SDL events in a number of ways
+// (Event, EventWithTimeout, Poll).
 package gamemanager
 
 import (
