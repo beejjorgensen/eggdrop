@@ -108,6 +108,22 @@ func (ps *PlayState) handleMenuItem(i int) bool {
 	return false
 }
 
+// positionNest positions and clamps the nest
+func (ps *PlayState) positionNest(x int32) {
+	w := ps.nestEntity.W
+	x -= w / 2 // center
+
+	if x < 0 {
+		x = 0
+	}
+
+	if x > 800-w {
+		x = 800 - w
+	}
+
+	ps.nestEntity.X = x
+}
+
 // handleEventPlaying deals with paused events in the play state
 func (ps *PlayState) handleEventPlaying(event *sdl.Event) bool {
 	switch event := (*event).(type) {
@@ -118,6 +134,8 @@ func (ps *PlayState) handleEventPlaying(event *sdl.Event) bool {
 		case sdl.K_ESCAPE, sdl.K_p:
 			ps.pause(true)
 		}
+	case *sdl.MouseMotionEvent:
+		ps.positionNest(event.X)
 	}
 
 	return false
