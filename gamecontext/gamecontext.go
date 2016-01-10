@@ -8,7 +8,9 @@ type gameContext struct {
 	MainSurface     *sdl.Surface
 	PixelFormat     *sdl.PixelFormat
 	PixelFormatEnum uint32
+
+	WindowWidth, WindowHeight int32
 }
 
 // GContext holds the global game state
-var GContext gameContext
+var GContext = &gameContext{}

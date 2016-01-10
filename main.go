@@ -41,36 +41,41 @@ func createMainWindow() {
 	var err error
 	var mainWindow *sdl.Window
 
-	mainWindow, err = sdl.CreateWindow("Eggdrop!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, 800, 600, sdl.WINDOW_SHOWN)
+	gc := gamecontext.GContext
+	gc.WindowWidth = 800
+	gc.WindowHeight = 600
+
+	mainWindow, err = sdl.CreateWindow("Eggdrop!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int(gc.WindowWidth), int(gc.WindowHeight), sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
 	}
 
-	gamecontext.GContext.MainSurface, err = mainWindow.GetSurface()
+	gc.MainSurface, err = mainWindow.GetSurface()
 	if err != nil {
 		panic(err)
 	}
 
-	gamecontext.GContext.PixelFormatEnum, err = mainWindow.GetPixelFormat()
+	gc.PixelFormatEnum, err = mainWindow.GetPixelFormat()
 	if err != nil {
 		panic(err)
 	}
 
-	gamecontext.GContext.PixelFormat, err = sdl.AllocFormat(uint(gamecontext.GContext.PixelFormatEnum)) // TODO why the cast? Seems to work?
+	gc.PixelFormat, err = sdl.AllocFormat(uint(gc.PixelFormatEnum)) // TODO why the cast? Seems to work?
 	if err != nil {
 		panic(err)
 	}
 
-	gamecontext.GContext.MainWindow = mainWindow
+	gc.MainWindow = mainWindow
 }
 
 func main() {
 	sdlInit()
 
 	gm := gamemanager.GGameManager
+	gc := gamecontext.GContext
 
 	createMainWindow()
-	defer gamecontext.GContext.MainWindow.Destroy()
+	defer gc.MainWindow.Destroy()
 
 	intro := &introstate.IntroState{}
 	play := &playstate.PlayState{}
@@ -81,8 +86,8 @@ func main() {
 	done := false
 
 	// Keep handy for use in the loop
-	mainWindow := gamecontext.GContext.MainWindow
-	mainWindowSurface := gamecontext.GContext.MainSurface
+	mainWindow := gc.MainWindow
+	mainWindowSurface := gc.MainSurface
 
 	gm.SetMode(gamemanager.GameModeIntro)
 

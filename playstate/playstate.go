@@ -75,9 +75,9 @@ func (ps *PlayState) buildScene() {
 	util.CenterEntityInParent(ps.menu.RootEntity, ps.rootEntity)
 
 	// Ground
-	groundSurface, err := util.MakeFillSurfaceConvertFormat(800, 60, 98, 102, 34, 255, gamecontext.GContext.PixelFormatEnum)
+	groundSurface, err := util.MakeFillSurfaceConvertFormat(gamecontext.GContext.WindowWidth, 60, 98, 102, 34, 255, gamecontext.GContext.PixelFormatEnum)
 	groundEntity := scenegraph.NewEntity(groundSurface)
-	groundEntity.Y = 600 - 60
+	groundEntity.Y = gamecontext.GContext.WindowHeight - 60
 
 	// Build scenegraph
 	ps.rootEntity.AddChild(groundEntity)
@@ -117,8 +117,9 @@ func (ps *PlayState) positionNest(x int32) {
 		x = 0
 	}
 
-	if x > 800-w {
-		x = 800 - w
+	maxX := gamecontext.GContext.WindowWidth - w
+	if x > maxX {
+		x = maxX
 	}
 
 	ps.nestEntity.X = x
