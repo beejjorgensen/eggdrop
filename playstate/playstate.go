@@ -18,6 +18,7 @@ import (
 
 const (
 	assetMenuFontID = iota
+	assetNestID
 	assetMenuBaseID = 0x10000
 )
 
@@ -32,12 +33,14 @@ type PlayState struct {
 	paused bool
 
 	menu *menu.Menu
+
+	nestEntity *scenegraph.Entity
 }
 
 // Init initializes this gamestate
 func (ps *PlayState) Init() {
 	// Create colors
-	ps.bgColor = sdl.MapRGB(gamecontext.GContext.PixelFormat, 60, 60, 160)
+	ps.bgColor = sdl.MapRGB(gamecontext.GContext.PixelFormat, 133, 187, 234)
 	ps.fontNormalColor = sdl.Color{R: 255, G: 255, B: 255, A: 255}
 	ps.fontHighlightColor = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 
@@ -49,19 +52,37 @@ func (ps *PlayState) Init() {
 
 // buildScene constructs the necessary elements for the scene
 func (ps *PlayState) buildScene() {
+	am := ps.assetManager // asset manager
+
 	mainW := gamecontext.GContext.MainSurface.W
 	mainH := gamecontext.GContext.MainSurface.H
 
-	rootEntity := scenegraph.NewEntity(nil)
-	rootEntity.W = mainW
-	rootEntity.H = mainH
+	ps.rootEntity = scenegraph.NewEntity(nil)
+	ps.rootEntity.W = mainW
+	ps.rootEntity.H = mainH
 
+	// Nest
+	nestSurface, err := am.LoadSurface(assetNestID, "assets/nest.png")
+	if err != nil {
+		panic(fmt.Sprintf("nest.png: %v", err))
+	}
+	ps.nestEntity = scenegraph.NewEntity(nestSurface)
+	ps.nestEntity.Y = 473
+	util.CenterEntityInParent(ps.nestEntity, ps.rootEntity)
+
+	// Pause menu stuff
 	ps.buildPauseMenu()
+	util.CenterEntityInParent(ps.menu.RootEntity, ps.rootEntity)
 
-	util.CenterEntityInParent(ps.menu.RootEntity, rootEntity)
-	rootEntity.AddChild(ps.pauseMenuEntity)
+	// Ground
+	groundSurface, err := util.MakeFillSurfaceConvertFormat(800, 60, 98, 102, 34, 255, gamecontext.GContext.PixelFormatEnum)
+	groundEntity := scenegraph.NewEntity(groundSurface)
+	groundEntity.Y = 600 - 60
 
-	ps.rootEntity = rootEntity
+	// Build scenegraph
+	ps.rootEntity.AddChild(groundEntity)
+	ps.rootEntity.AddChild(ps.nestEntity)
+	ps.rootEntity.AddChild(ps.pauseMenuEntity)
 }
 
 // loadAssets loads this state's assets

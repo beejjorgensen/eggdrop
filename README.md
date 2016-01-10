@@ -17,12 +17,11 @@ Work in progress. Currently non-functional.
 TODO
 ====
 
-* Break play state stuff into different files in playstate?
+* Nest
 * Drop the menu surfaces from the asset tracker?
 * Move shared assets to sharedassetmanager
 * Chicken
 * Eggs
-* Nest
 * Scoring
 * Lives
 * Draw programmer art

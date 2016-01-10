@@ -43,3 +43,29 @@ func RenderText(font *ttf.Font, text string, color sdl.Color) (*sdl.Surface, err
 
 	return surface, err
 }
+
+// MakeFillSurfaceAlpha makes a new rectangular surface and fills with with RGBA
+func MakeFillSurfaceAlpha(width, height int32, red, green, blue, alpha uint8) (*sdl.Surface, error) {
+	pf, err := sdl.AllocFormat(sdl.PIXELFORMAT_RGBA8888)
+	if err != nil {
+		return nil, err
+	}
+	color := sdl.MapRGBA(pf, red, green, blue, alpha)
+	surface, err := sdl.CreateRGBSurface(0, width, height, 32, pf.Rmask, pf.Gmask, pf.Bmask, pf.Amask)
+	if err != nil {
+		return nil, err
+	}
+	surface.FillRect(&sdl.Rect{X: 0, Y: 0, W: width, H: height}, color)
+
+	return surface, nil
+}
+
+// MakeFillSurfaceConvertFormat makes a new rectangular surface and fills with with RGBA
+func MakeFillSurfaceConvertFormat(width, height int32, red, green, blue, alpha uint8, pf uint32) (*sdl.Surface, error) {
+	surface, err := MakeFillSurfaceAlpha(width, height, red, green, blue, alpha)
+	if err != nil {
+		return nil, err
+	}
+
+	return surface.ConvertFormat(pf, 0)
+}

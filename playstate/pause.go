@@ -7,6 +7,7 @@ import (
 	"github.com/beejjorgensen/eggdrop/gamemanager"
 	"github.com/beejjorgensen/eggdrop/menu"
 	"github.com/beejjorgensen/eggdrop/scenegraph"
+	"github.com/beejjorgensen/eggdrop/util"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -18,17 +19,10 @@ func (ps *PlayState) buildPauseMenu() {
 	mainH := gamecontext.GContext.MainSurface.H
 
 	// Build pause menu shade background
-	//pf := gamecontext.GContext.PixelFormat
-	pf, err := sdl.AllocFormat(sdl.PIXELFORMAT_RGBA8888)
-	if err != nil {
-		panic(fmt.Sprintf("Pause bgSurface AllocFormat: %v", err))
-	}
-	pauseBGColor := sdl.MapRGBA(pf, 0, 0, 0, 127)
-	pauseBGSurface, err := sdl.CreateRGBSurface(0, mainW, mainH, 32, pf.Rmask, pf.Gmask, pf.Bmask, pf.Amask)
+	pauseBGSurface, err := util.MakeFillSurfaceAlpha(mainW, mainH, 0, 0, 0, 127)
 	if err != nil {
 		panic(fmt.Sprintf("Pause bgSurface: %v", err))
 	}
-	pauseBGSurface.FillRect(&sdl.Rect{X: 0, Y: 0, W: mainW, H: mainH}, pauseBGColor)
 
 	ps.pauseMenuEntity = scenegraph.NewEntity(pauseBGSurface)
 	ps.pauseMenuEntity.Visible = false

@@ -4,9 +4,10 @@ package gamecontext
 import "github.com/veandco/go-sdl2/sdl"
 
 type gameContext struct {
-	MainWindow  *sdl.Window
-	MainSurface *sdl.Surface
-	PixelFormat *sdl.PixelFormat
+	MainWindow      *sdl.Window
+	MainSurface     *sdl.Surface
+	PixelFormat     *sdl.PixelFormat
+	PixelFormatEnum uint32
 }
 
 // GContext holds the global game state

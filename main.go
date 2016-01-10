@@ -51,14 +51,12 @@ func createMainWindow() {
 		panic(err)
 	}
 
-	var winPixelFormat uint32
-
-	winPixelFormat, err = mainWindow.GetPixelFormat()
+	gamecontext.GContext.PixelFormatEnum, err = mainWindow.GetPixelFormat()
 	if err != nil {
 		panic(err)
 	}
 
-	gamecontext.GContext.PixelFormat, err = sdl.AllocFormat(uint(winPixelFormat)) // TODO why the cast? Seems to work?
+	gamecontext.GContext.PixelFormat, err = sdl.AllocFormat(uint(gamecontext.GContext.PixelFormatEnum)) // TODO why the cast? Seems to work?
 	if err != nil {
 		panic(err)
 	}
