@@ -79,8 +79,13 @@ func (ps *PlayState) buildScene() {
 	groundEntity := scenegraph.NewEntity(groundSurface)
 	groundEntity.Y = gamecontext.GContext.WindowHeight - 60
 
+	// Branch
+	branchSurface, err := util.MakeFillSurfaceConvertFormat(gamecontext.GContext.WindowWidth, 6, 49, 49, 16, 255, gamecontext.GContext.PixelFormatEnum)
+	branchEntity := scenegraph.NewEntity(branchSurface)
+	branchEntity.Y = 120
+
 	// Build scenegraph
-	ps.rootEntity.AddChild(groundEntity)
+	ps.rootEntity.AddChild(groundEntity, branchEntity)
 	ps.rootEntity.AddChild(ps.nestEntity)
 	ps.rootEntity.AddChild(ps.pauseMenuEntity)
 }

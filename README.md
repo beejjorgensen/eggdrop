@@ -19,6 +19,8 @@ TODO
 
 * Drop the menu surfaces from the asset tracker?
 * Move shared assets to sharedassetmanager
+* AABB
+* AABB automatic tracking in entities
 * Chicken
 * Eggs
 * Scoring
