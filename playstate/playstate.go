@@ -19,6 +19,8 @@ import (
 const (
 	assetMenuFontID = iota
 	assetNestID
+	assetChickenLeftID
+	assetChickenRightID
 	assetMenuBaseID = 0x10000
 )
 
@@ -62,11 +64,7 @@ func (ps *PlayState) buildScene() {
 	ps.rootEntity.H = mainH
 
 	// Nest
-	nestSurface, err := am.LoadSurface(assetNestID, "assets/nest.png")
-	if err != nil {
-		panic(fmt.Sprintf("nest.png: %v", err))
-	}
-	ps.nestEntity = scenegraph.NewEntity(nestSurface)
+	ps.nestEntity = scenegraph.NewEntity(am.Surfaces[assetNestID])
 	ps.nestEntity.Y = 473
 	util.CenterEntityInParent(ps.nestEntity, ps.rootEntity)
 
@@ -76,15 +74,27 @@ func (ps *PlayState) buildScene() {
 
 	// Ground
 	groundSurface, err := util.MakeFillSurfaceConvertFormat(gamecontext.GContext.WindowWidth, 60, 98, 102, 34, 255, gamecontext.GContext.PixelFormatEnum)
+	if err != nil {
+		panic("groundSurface")
+	}
 	groundEntity := scenegraph.NewEntity(groundSurface)
 	groundEntity.Y = gamecontext.GContext.WindowHeight - 60
 
 	// Branch
 	branchSurface, err := util.MakeFillSurfaceConvertFormat(gamecontext.GContext.WindowWidth, 6, 49, 49, 16, 255, gamecontext.GContext.PixelFormatEnum)
+	if err != nil {
+		panic("branch")
+	}
 	branchEntity := scenegraph.NewEntity(branchSurface)
 	branchEntity.Y = 120
 
+	// Chicken
+	chickenLeftEntity := scenegraph.NewEntity(am.Surfaces[assetChickenLeftID])
+	chickenRightEntity := scenegraph.NewEntity(am.Surfaces[assetChickenRightID])
+	chickenRightEntity.X = 400
+
 	// Build scenegraph
+	ps.rootEntity.AddChild(chickenLeftEntity, chickenRightEntity)
 	ps.rootEntity.AddChild(groundEntity, branchEntity)
 	ps.rootEntity.AddChild(ps.nestEntity)
 	ps.rootEntity.AddChild(ps.pauseMenuEntity)
@@ -93,11 +103,17 @@ func (ps *PlayState) buildScene() {
 // loadAssets loads this state's assets
 func (ps *PlayState) loadAssets() {
 	am := ps.assetManager // asset manager
-	var err error
 
-	if err = am.LoadFont(assetMenuFontID, "assets/Osborne1.ttf", 40); err != nil {
+	if err := am.LoadFont(assetMenuFontID, "assets/Osborne1.ttf", 40); err != nil {
 		panic(fmt.Sprintf("Playstate load font: %v", err))
 	}
+
+	_, err := am.LoadSurface(assetNestID, "assets/nest.png")
+	if err != nil {
+		panic(fmt.Sprintf("nest.png: %v", err))
+	}
+
+	ps.loadChicken()
 }
 
 // handleMenuItem does the right thing with a selected menu item

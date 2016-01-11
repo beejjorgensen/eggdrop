@@ -5,9 +5,7 @@
 // replaced by something more appropriate (e.g. a matrix).
 package scenegraph
 
-import (
-	"github.com/veandco/go-sdl2/sdl"
-)
+import "github.com/veandco/go-sdl2/sdl"
 
 const initialChildrenCap = 5
 
@@ -48,7 +46,7 @@ func (e *Entity) AddChild(childs ...*Entity) { // Tribute to Childs from The Thi
 		// TODO: Growth code could be optimized out of this loop
 		currentCap := cap(e.children)
 		if len(e.children) == currentCap {
-			newChildren := make([]*Entity, currentCap*2)
+			newChildren := make([]*Entity, currentCap, currentCap*2)
 			copy(newChildren, e.children)
 			e.children = append(newChildren, c)
 		} else {

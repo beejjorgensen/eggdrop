@@ -25,7 +25,6 @@ TODO
 * Eggs
 * Scoring
 * Lives
-* Draw programmer art
 * Sound system
 * Cel animation in the entities
 * Record programmer soundfx
