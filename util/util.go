@@ -81,8 +81,14 @@ func MakeEmptySurfaceFrom(src *sdl.Surface) (*sdl.Surface, error) {
 	return sdl.CreateRGBSurface(0, src.W, src.H, int32(pf.BitsPerPixel), pf.Rmask, pf.Gmask, pf.Bmask, pf.Amask)
 }
 
-// SurfaceFlipH produces a new surface with a horizontally-flipped version of the source surface.
-func SurfaceFlipH(src *sdl.Surface) (*sdl.Surface, error) {
+// surfaceManipulate is an internal function that creates a new surface, gets
+// metadata, and then calls a passed-in function to actually do something to it,
+// e.g. horizontally flip all the pixels.
+//
+// Note: this only supports manipulations that leave the Surface the same
+// dimensions. It could potentially be generalized to handle manipulations that
+// leave the Surface with the same number of pixels.
+func surfaceManipulate(src *sdl.Surface, f func(src *sdl.Surface, srcWBytes, bytesPerPixel int32, srcPx, destPx []byte)) (*sdl.Surface, error) {
 	pf := src.Format
 
 	pixels := src.Pixels()
@@ -90,21 +96,48 @@ func SurfaceFlipH(src *sdl.Surface) (*sdl.Surface, error) {
 	bytesPP := int32(pf.BytesPerPixel)
 	bitsPP := int32(pf.BitsPerPixel)
 
-	srcWPx := src.W * bytesPP
+	srcWBytes := int32(src.W * bytesPP)
 
-	for y := src.H - 1; y >= 0; y-- {
-		rowStart := y * srcWPx
-		for x := src.W - 1; x >= 0; x-- {
-			si := rowStart + x*bytesPP
-			di := rowStart + (src.W-x-1)*bytesPP
-
-			copy(pixelsDest[di:], pixels[si:si+bytesPP])
-		}
-	}
+	// Perform the manipulation
+	f(src, srcWBytes, bytesPP, pixels, pixelsDest)
 
 	// We get the slice as a SliceHeader so we extract the .Data from it to
 	// pass to CreateRGBSurfaceFrom():
 	sh := (*reflect.SliceHeader)(unsafe.Pointer(&pixelsDest))
 
 	return sdl.CreateRGBSurfaceFrom(unsafe.Pointer(sh.Data), int(src.W), int(src.H), int(bitsPP), int(src.Pitch), pf.Rmask, pf.Gmask, pf.Bmask, pf.Amask)
+
+}
+
+// SurfaceFlipH produces a new surface with a horizontally-flipped version of
+// the source surface.
+func SurfaceFlipH(src *sdl.Surface) (*sdl.Surface, error) {
+	return surfaceManipulate(src, func(src *sdl.Surface, srcWBytes, bytesPerPixel int32, srcPx, destPx []byte) {
+		for y := src.H - 1; y >= 0; y-- {
+			rowStart := y * srcWBytes
+			for x := src.W - 1; x >= 0; x-- {
+				si := rowStart + x*bytesPerPixel
+				di := rowStart + (src.W-x-1)*bytesPerPixel
+
+				copy(destPx[di:], srcPx[si:si+bytesPerPixel])
+			}
+		}
+	})
+}
+
+// SurfaceFlipV produces a new surface with a vertically-flipped version of the
+// source surface.
+func SurfaceFlipV(src *sdl.Surface) (*sdl.Surface, error) {
+	return surfaceManipulate(src, func(src *sdl.Surface, srcWBytes, bytesPerPixel int32, srcPx, destPx []byte) {
+		for y := src.H - 1; y >= 0; y-- {
+			rowStart := y * srcWBytes
+			dRowStart := (src.H - y - 1) * srcWBytes
+			for x := src.W - 1; x >= 0; x-- {
+				si := rowStart + x*bytesPerPixel
+				di := dRowStart + x*bytesPerPixel
+
+				copy(destPx[di:], srcPx[si:si+bytesPerPixel])
+			}
+		}
+	})
 }
