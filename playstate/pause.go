@@ -47,21 +47,25 @@ func (ps *PlayState) buildPauseMenu() {
 func (ps *PlayState) pause(paused bool) {
 	gm := gamemanager.GGameManager
 
-	if ps.paused {
-		// Hide pause menu
-		ps.pauseMenuEntity.Visible = false
+	if paused == ps.paused {
+		return
+	}
 
-		// Set to Poll Driven
-		gm.SetEventMode(gamemanager.GameManagerPollDriven)
-	} else {
+	if paused {
 		// Show pause menu
 		ps.menu.SetSelected(0)
 		ps.pauseMenuEntity.Visible = true
 
 		// Set to Event Driven
 		gm.SetEventMode(gamemanager.GameManagerEventDriven)
+	} else {
+		// Hide pause menu
+		ps.pauseMenuEntity.Visible = false
+
+		// Set to Poll Driven
+		gm.SetEventMode(gamemanager.GameManagerPollDriven)
 	}
-	ps.paused = !ps.paused
+	ps.paused = paused
 }
 
 // handleEventPaused deals with paused events in the paused state

@@ -166,6 +166,8 @@ func (ps *PlayState) Render(mainWindowSurface *sdl.Surface) {
 
 // WillShow is called just before this state begins
 func (ps *PlayState) WillShow() {
+	ps.pause(false)
+
 	// call this to move on to the next transition state
 	gamemanager.GGameManager.WillShowComplete()
 }
