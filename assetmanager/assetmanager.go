@@ -21,6 +21,8 @@ var assetDir string
 type AssetManager struct {
 	Surfaces map[string]*sdl.Surface
 	Fonts    map[string]*ttf.Font
+
+	outerSurface *sdl.Surface
 }
 
 // AssetPath searches and stores the asset directory. See searchdirs.go for
@@ -51,6 +53,13 @@ func New() *AssetManager {
 		Surfaces: make(map[string]*sdl.Surface),
 		Fonts:    make(map[string]*ttf.Font),
 	}
+}
+
+// SetOuterSurface takes a reference to the outermost surface so it can be used
+// later for width and height values from the LoadJSON method. If it's not
+// needed in the JSON, this function doesn't need to be called.
+func (am *AssetManager) SetOuterSurface(surface *sdl.Surface) {
+	am.outerSurface = surface
 }
 
 // LoadSurface loads and tracks a new image
@@ -224,6 +233,79 @@ func (am *AssetManager) renderJSONText(jsonFile string, data interface{}) {
 	}
 }
 
+// getWindowInfoFromString takes a string from the JSON that requests window
+// size info and returns the proper size
+func (am *AssetManager) getWindowInfoFromString(s string) (int32, error) {
+	if am.outerSurface == nil {
+		return 0, errors.New("outerSurface not specified")
+	}
+	switch s {
+	case "WINDOW_WIDTH":
+		return int32(am.outerSurface.W), nil
+	case "WINDOW_HEIGHT":
+		return int32(am.outerSurface.H), nil
+	default:
+		return 0, fmt.Errorf("unrecognized parameter: %s", s)
+	}
+}
+
+// parseRectDimension parses a W or H dimension out of a Rect Record
+func (am *AssetManager) parseRectDimension(jsonFile, id, dim string, info map[string]interface{}) int32 {
+	var rv int32
+	var err error
+
+	switch val := info[dim].(type) { // "W" or "H"
+	case float64:
+		rv = int32(val)
+	case string:
+		rv, err = am.getWindowInfoFromString(val)
+		if err != nil {
+			loadJSONPanic(jsonFile, id, fmt.Sprintf("%s: %v", val, err))
+		}
+	default:
+		loadJSONPanic(jsonFile, id, fmt.Sprintf("%t: unknown parameter type", val))
+	}
+
+	return rv
+}
+
+// renderJSONRects renders rectangles specified in the JSON assets file
+func (am *AssetManager) renderJSONRects(jsonFile string, data interface{}) {
+	var err error
+
+	rectsArray := data.([]interface{})
+	var color *sdl.Color
+
+	for _, v := range rectsArray {
+		rectInfo := v.(map[string]interface{})
+
+		id, ok := rectInfo["Id"].(string)
+		if !ok {
+			loadJSONPanic(jsonFile, "", "Rect missing Id")
+		}
+
+		rgba, ok := rectInfo["Rgba"].([]interface{})
+		if len(rgba) == 4 {
+			color, err = sdlColorFromInterfaceArray(rgba)
+		}
+		if !ok || len(rgba) != 4 || err != nil {
+			loadJSONPanic(jsonFile, id, "Rgba needs to be in form [R,G,B,A], 0-255 for each element")
+		}
+
+		var width, height int32
+
+		width = am.parseRectDimension(jsonFile, id, "W", rectInfo)
+		height = am.parseRectDimension(jsonFile, id, "H", rectInfo)
+
+		surface, err := util.MakeFillSurfaceAlpha(width, height, color.R, color.G, color.B, color.A)
+		if err != nil {
+			loadJSONPanic(jsonFile, id, fmt.Sprintf("Error making rect: %v", err))
+		}
+
+		am.AddSurface(id, surface)
+	}
+}
+
 // LoadJSON reads a JSON file and loads all the assets described therein
 func (am *AssetManager) LoadJSON(jsonFile string) error {
 	var err error
@@ -253,6 +335,9 @@ func (am *AssetManager) LoadJSON(jsonFile string) error {
 
 		case "Text":
 			am.renderJSONText(jsonFile, v)
+
+		case "Rects":
+			am.renderJSONRects(jsonFile, v)
 		}
 
 	}

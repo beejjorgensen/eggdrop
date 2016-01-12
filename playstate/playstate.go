@@ -37,6 +37,7 @@ func (ps *PlayState) Init() {
 	ps.fontHighlightColor = sdl.Color{R: 255, G: 255, B: 0, A: 255}
 
 	ps.assetManager = assetmanager.New()
+	ps.assetManager.SetOuterSurface(gamecontext.GContext.MainSurface)
 
 	ps.assetManager.LoadJSON("playassets.json")
 	ps.buildScene()
@@ -63,19 +64,11 @@ func (ps *PlayState) buildScene() {
 	util.CenterEntityInParent(ps.menu.RootEntity, ps.rootEntity)
 
 	// Ground
-	groundSurface, err := util.MakeFillSurfaceConvertFormat(gamecontext.GContext.WindowWidth, 60, 98, 102, 34, 255, gamecontext.GContext.PixelFormatEnum)
-	if err != nil {
-		panic("groundSurface")
-	}
-	groundEntity := scenegraph.NewEntity(groundSurface)
+	groundEntity := scenegraph.NewEntity(am.Surfaces["groundRect"])
 	groundEntity.Y = gamecontext.GContext.WindowHeight - 60
 
 	// Branch
-	branchSurface, err := util.MakeFillSurfaceConvertFormat(gamecontext.GContext.WindowWidth, 6, 49, 49, 16, 255, gamecontext.GContext.PixelFormatEnum)
-	if err != nil {
-		panic("branch")
-	}
-	branchEntity := scenegraph.NewEntity(branchSurface)
+	branchEntity := scenegraph.NewEntity(am.Surfaces["branchRect"])
 	branchEntity.Y = 120
 
 	// Chicken
