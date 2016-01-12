@@ -10,5 +10,14 @@
 			"Font": "Osborne1.ttf",
 			"Size": 40
 		}
+	],
+
+	"Text": [
+		{
+			"Id": "titleText",
+			"Font": "titleFont",
+			"Text": "Eggdrop!",
+			"Rgba": [255, 255, 255, 255]
+		}
 	]
 }

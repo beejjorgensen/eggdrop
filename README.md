@@ -17,6 +17,7 @@ Work in progress. Currently non-functional.
 TODO
 ====
 
+* Build the scenegraph from JSON
 * Drop the menu surfaces from the asset tracker?
 * Move shared assets to sharedassetmanager
 * AABB

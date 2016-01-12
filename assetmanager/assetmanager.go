@@ -4,6 +4,7 @@ package assetmanager
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -127,7 +128,7 @@ func (am *AssetManager) loadJSONImages(jsonFile string, data interface{}) {
 
 		id, ok := imageInfo["Id"].(string)
 		if !ok {
-			loadJSONPanic(jsonFile, "", "Missing ID")
+			loadJSONPanic(jsonFile, "", "Image missing ID")
 		}
 
 		image, imageOk := imageInfo["Image"].(string)
@@ -135,7 +136,7 @@ func (am *AssetManager) loadJSONImages(jsonFile string, data interface{}) {
 
 		if imageOk {
 			// Load a normal image
-			_, err := am.LoadSurface(id, image)
+			_, err := am.LoadSurface(id, AssetPath(image))
 			if err != nil {
 				loadJSONPanic(jsonFile, id, "Error loading image")
 			}
@@ -172,6 +173,57 @@ func (am *AssetManager) loadJSONImages(jsonFile string, data interface{}) {
 
 }
 
+// sdlColorFromInterfaceArray is a helper function for parsing RGBA arrays from
+// JSON.
+func sdlColorFromInterfaceArray(rgba []interface{}) (*sdl.Color, error) {
+	r, rOk := rgba[0].(float64)
+	g, gOk := rgba[1].(float64)
+	b, bOk := rgba[2].(float64)
+	a, aOk := rgba[3].(float64)
+
+	if !rOk || !gOk || !bOk || !aOk {
+		return nil, errors.New("RGBA parse failure")
+	}
+
+	return &sdl.Color{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(a)}, nil
+}
+
+// renderJSONText renders text from the JSON file into surfaces
+func (am *AssetManager) renderJSONText(jsonFile string, data interface{}) {
+	var err error
+
+	textArray := data.([]interface{})
+	var color *sdl.Color
+
+	for _, v := range textArray {
+		textInfo := v.(map[string]interface{})
+
+		id, ok := textInfo["Id"].(string)
+		if !ok {
+			loadJSONPanic(jsonFile, "", "Text missing Id")
+		}
+		font, ok := textInfo["Font"].(string)
+		if !ok {
+			loadJSONPanic(jsonFile, id, "Missing Font")
+		}
+		text, ok := textInfo["Text"].(string)
+		if !ok {
+			loadJSONPanic(jsonFile, id, "Missing Text")
+		}
+		rgba, ok := textInfo["Rgba"].([]interface{})
+		if len(rgba) == 4 {
+			color, err = sdlColorFromInterfaceArray(rgba)
+		}
+		if !ok || len(rgba) != 4 || err != nil {
+			loadJSONPanic(jsonFile, id, "Rgba needs to be in form [R,G,B,A], 0-255 for each element")
+		}
+
+		if _, err = am.RenderText(id, font, text, *color); err != nil {
+			panic(fmt.Sprintf("Intro render font: %v", err))
+		}
+	}
+}
+
 // LoadJSON reads a JSON file and loads all the assets described therein
 func (am *AssetManager) LoadJSON(jsonFile string) error {
 	var err error
@@ -185,14 +237,24 @@ func (am *AssetManager) LoadJSON(jsonFile string) error {
 		return err
 	}
 
+	// Process fonts first since Text nodes can refer to them
+	fonts, ok := assetData["Fonts"]
+	if ok {
+		am.loadJSONFonts(jsonFile, fonts)
+	}
+
 	for k, v := range assetData {
 		switch k {
 		case "Fonts":
-			am.loadJSONFonts(jsonFile, v)
+			// Do nothing--we processed them above
 
 		case "Images":
 			am.loadJSONImages(jsonFile, v)
+
+		case "Text":
+			am.renderJSONText(jsonFile, v)
 		}
+
 	}
 
 	return nil

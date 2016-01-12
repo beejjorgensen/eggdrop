@@ -38,7 +38,7 @@ func (ps *PlayState) Init() {
 
 	ps.assetManager = assetmanager.New()
 
-	ps.loadAssets()
+	ps.assetManager.LoadJSON("playassets.json")
 	ps.buildScene()
 }
 
@@ -88,25 +88,6 @@ func (ps *PlayState) buildScene() {
 	ps.rootEntity.AddChild(groundEntity, branchEntity)
 	ps.rootEntity.AddChild(ps.nestEntity)
 	ps.rootEntity.AddChild(ps.pauseMenuEntity)
-}
-
-// loadAssets loads this state's assets
-func (ps *PlayState) loadAssets() {
-	am := ps.assetManager // asset manager
-
-	am.LoadJSON("playassets.json")
-	/*
-			if err := am.LoadFont("menuFont", "assets/Osborne1.ttf", 40); err != nil {
-				panic(fmt.Sprintf("Playstate load font: %v", err))
-			}
-
-		_, err := am.LoadSurface("nestImage", "assets/nest.png")
-		if err != nil {
-			panic(fmt.Sprintf("nest.png: %v", err))
-		}
-	*/
-
-	ps.loadChicken()
 }
 
 // handleMenuItem does the right thing with a selected menu item

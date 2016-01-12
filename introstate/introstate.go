@@ -3,8 +3,6 @@
 package introstate
 
 import (
-	"fmt"
-
 	"github.com/beejjorgensen/eggdrop/assetmanager"
 	"github.com/beejjorgensen/eggdrop/gamecontext"
 	"github.com/beejjorgensen/eggdrop/gamemanager"
@@ -32,19 +30,8 @@ func (is *IntroState) Init() {
 
 	is.assetManager = assetmanager.New()
 
-	is.loadAssets()
+	is.assetManager.LoadJSON("introassets.json")
 	is.buildScene()
-}
-
-func (is *IntroState) loadAssets() {
-	am := is.assetManager // asset manager
-	var err error
-
-	am.LoadJSON("introassets.json")
-
-	if _, err = am.RenderText("titleGraphic", "titleFont", "Eggdrop!", is.fontNormalColor); err != nil {
-		panic(fmt.Sprintf("Intro render font: %v", err))
-	}
 }
 
 func (is *IntroState) buildScene() {
@@ -54,7 +41,7 @@ func (is *IntroState) buildScene() {
 	rootEntity.W = gamecontext.GContext.MainSurface.W
 	rootEntity.H = gamecontext.GContext.MainSurface.H
 
-	titleEntity := scenegraph.NewEntity(am.Surfaces["titleGraphic"])
+	titleEntity := scenegraph.NewEntity(am.Surfaces["titleText"])
 
 	mColor := is.fontNormalColor
 	mHiColor := is.fontHighlightColor
