@@ -1,0 +1,14 @@
+{
+	"Fonts": [
+		{
+			"Id": "titleFont",
+			"Font": "Osborne1.ttf",
+			"Size": 50
+		},
+		{
+			"Id": "menuFont",
+			"Font": "Osborne1.ttf",
+			"Size": 40
+		}
+	]
+}

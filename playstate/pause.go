@@ -32,11 +32,11 @@ func (ps *PlayState) buildPauseMenu() {
 	mHiColor := ps.fontHighlightColor
 
 	menuItems := []menu.Item{
-		{AssetFontID: assetMenuFontID, Text: "Return to Game", Color: mColor, HiColor: mHiColor},
-		{AssetFontID: assetMenuFontID, Text: "Main Menu", Color: mColor, HiColor: mHiColor},
+		{AssetFontID: "menuFont", Text: "Return to Game", Color: mColor, HiColor: mHiColor},
+		{AssetFontID: "menuFont", Text: "Main Menu", Color: mColor, HiColor: mHiColor},
 	}
 
-	ps.menu = menu.New(am, assetMenuBaseID, menuItems, 60, menu.MenuJustifyCenter)
+	ps.menu = menu.New(am, "playMenu", menuItems, 60, menu.MenuJustifyCenter)
 
 	ps.menu.RootEntity.Y = 200
 

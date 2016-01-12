@@ -16,14 +16,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-const (
-	assetMenuFontID = iota
-	assetNestID
-	assetChickenLeftID
-	assetChickenRightID
-	assetMenuBaseID = 0x10000
-)
-
 // PlayState holds information about the main game and pause menu
 type PlayState struct {
 	assetManager                *assetmanager.AssetManager
@@ -64,7 +56,7 @@ func (ps *PlayState) buildScene() {
 	ps.rootEntity.H = mainH
 
 	// Nest
-	ps.nestEntity = scenegraph.NewEntity(am.Surfaces[assetNestID])
+	ps.nestEntity = scenegraph.NewEntity(am.Surfaces["nestImage"])
 	ps.nestEntity.Y = 473
 	util.CenterEntityInParent(ps.nestEntity, ps.rootEntity)
 
@@ -89,8 +81,8 @@ func (ps *PlayState) buildScene() {
 	branchEntity.Y = 120
 
 	// Chicken
-	chickenLeftEntity := scenegraph.NewEntity(am.Surfaces[assetChickenLeftID])
-	chickenRightEntity := scenegraph.NewEntity(am.Surfaces[assetChickenRightID])
+	chickenLeftEntity := scenegraph.NewEntity(am.Surfaces["chickenLeftImage"])
+	chickenRightEntity := scenegraph.NewEntity(am.Surfaces["chickenRightImage"])
 	chickenRightEntity.X = 400
 
 	// Build scenegraph
@@ -104,11 +96,14 @@ func (ps *PlayState) buildScene() {
 func (ps *PlayState) loadAssets() {
 	am := ps.assetManager // asset manager
 
-	if err := am.LoadFont(assetMenuFontID, "assets/Osborne1.ttf", 40); err != nil {
-		panic(fmt.Sprintf("Playstate load font: %v", err))
-	}
+	am.LoadJSON("playassets.json")
+	/*
+		if err := am.LoadFont("menuFont", "assets/Osborne1.ttf", 40); err != nil {
+			panic(fmt.Sprintf("Playstate load font: %v", err))
+		}
+	*/
 
-	_, err := am.LoadSurface(assetNestID, "assets/nest.png")
+	_, err := am.LoadSurface("nestImage", "assets/nest.png")
 	if err != nil {
 		panic(fmt.Sprintf("nest.png: %v", err))
 	}

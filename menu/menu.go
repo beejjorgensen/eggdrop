@@ -23,7 +23,7 @@ type Menu struct {
 
 // Item describes an individual Menu line item
 type Item struct {
-	AssetFontID    int
+	AssetFontID    string
 	Text           string
 	Color, HiColor sdl.Color
 }
@@ -36,7 +36,7 @@ const (
 )
 
 // New constructs the menu
-func New(am *assetmanager.AssetManager, id int, items []Item, spacing int32, justification int) *Menu {
+func New(am *assetmanager.AssetManager, id string, items []Item, spacing int32, justification int) *Menu {
 	// TODO: do these even need to be registered with any asset manager? just use util.RenderText?
 	menu := &Menu{items: items, spacing: spacing, justification: justification}
 
@@ -45,22 +45,24 @@ func New(am *assetmanager.AssetManager, id int, items []Item, spacing int32, jus
 	maxH := int32(0)
 	maxW := int32(0)
 
+	idNum := 0
+
 	for i, item := range menu.items {
 		var err error
 		var surface, surfaceHi *sdl.Surface
 		var entity, entityHi *scenegraph.Entity
 
-		if surface, err = am.RenderText(id, item.AssetFontID, item.Text, item.Color); err != nil {
+		if surface, err = am.RenderText(fmt.Sprintf("%s-%d", id, idNum), item.AssetFontID, item.Text, item.Color); err != nil {
 			panic(fmt.Sprintf("Menu render font: %v", err))
 		}
 
-		id++
+		idNum++
 
-		if surfaceHi, err = am.RenderText(id, item.AssetFontID, item.Text, item.HiColor); err != nil {
+		if surfaceHi, err = am.RenderText(fmt.Sprintf("%s-%d", id, idNum), item.AssetFontID, item.Text, item.HiColor); err != nil {
 			panic(fmt.Sprintf("Intro render font: %v", err))
 		}
 
-		id++
+		idNum++
 
 		entity = scenegraph.NewEntity(surface)
 		entity.Visible = i > 0

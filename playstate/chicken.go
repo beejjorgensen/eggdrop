@@ -9,7 +9,7 @@ import (
 func (ps *PlayState) loadChicken() {
 	am := ps.assetManager // asset manager
 
-	chixLeftSurface, err := am.LoadSurface(assetChickenLeftID, "assets/chicken.png")
+	chixLeftSurface, err := am.LoadSurface("chickenLeftImage", "assets/chicken.png")
 	if err != nil {
 		panic(fmt.Sprintf("chicken.png: %v", err))
 	}
@@ -18,5 +18,5 @@ func (ps *PlayState) loadChicken() {
 	if err != nil {
 		panic(fmt.Sprintf("chixRightSurface: %v", err))
 	}
-	am.AddSurface(assetChickenRightID, chixRightSurface)
+	am.AddSurface("chickenRightImage", chixRightSurface)
 }

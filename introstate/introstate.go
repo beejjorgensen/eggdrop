@@ -14,14 +14,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-const (
-	assetBeejEyeID = iota
-	assetTitleFontID
-	assetTitleID
-	assetMenuBaseID = 0x10000
-	assetMenuFontID
-)
-
 // IntroState holds all information about the intro state
 type IntroState struct {
 	assetManager                        *assetmanager.AssetManager
@@ -48,15 +40,9 @@ func (is *IntroState) loadAssets() {
 	am := is.assetManager // asset manager
 	var err error
 
-	if err = am.LoadFont(assetTitleFontID, "assets/Osborne1.ttf", 50); err != nil {
-		panic(fmt.Sprintf("Intro load font: %v", err))
-	}
+	am.LoadJSON("introassets.json")
 
-	if err = am.LoadFont(assetMenuFontID, "assets/Osborne1.ttf", 40); err != nil {
-		panic(fmt.Sprintf("Intro load font: %v", err))
-	}
-
-	if _, err = am.RenderText(assetTitleID, assetTitleFontID, "Eggdrop!", is.fontNormalColor); err != nil {
+	if _, err = am.RenderText("titleGraphic", "titleFont", "Eggdrop!", is.fontNormalColor); err != nil {
 		panic(fmt.Sprintf("Intro render font: %v", err))
 	}
 }
@@ -68,17 +54,17 @@ func (is *IntroState) buildScene() {
 	rootEntity.W = gamecontext.GContext.MainSurface.W
 	rootEntity.H = gamecontext.GContext.MainSurface.H
 
-	titleEntity := scenegraph.NewEntity(am.Surfaces[assetTitleID])
+	titleEntity := scenegraph.NewEntity(am.Surfaces["titleGraphic"])
 
 	mColor := is.fontNormalColor
 	mHiColor := is.fontHighlightColor
 
 	menuItems := []menu.Item{
-		{AssetFontID: assetMenuFontID, Text: "Play!", Color: mColor, HiColor: mHiColor},
-		{AssetFontID: assetMenuFontID, Text: "Quit", Color: mColor, HiColor: mHiColor},
+		{AssetFontID: "menuFont", Text: "Play!", Color: mColor, HiColor: mHiColor},
+		{AssetFontID: "menuFont", Text: "Quit", Color: mColor, HiColor: mHiColor},
 	}
 
-	is.menu = menu.New(am, assetMenuBaseID, menuItems, 60, menu.MenuJustifyCenter)
+	is.menu = menu.New(am, "introMenu", menuItems, 60, menu.MenuJustifyCenter)
 
 	util.CenterEntityInParent(is.menu.RootEntity, rootEntity)
 	is.menu.RootEntity.Y = 200

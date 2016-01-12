@@ -1,0 +1,40 @@
+{
+	"Images": [
+		{
+			"Id": "chickenLeftImage",
+			"Image": "chicken.png"
+		},
+		{
+			"Id": "chickenRightImage",
+			"Src": "chickenLeft",
+			"Transform": "FLIP_H"
+		},
+		{
+			"Id": "nestImage",
+			"Image": "nest.png"
+		}
+	],
+
+	"Fonts": [
+		{
+			"Id": "menuFont",
+			"Font": "Osborne1.ttf",
+			"Size": 40
+		}
+	],
+
+	"Rects": [
+		{
+			"Id": "groundRect",
+			"Rgba": [98, 102, 34, 255],
+			"W": "WINDOW_WIDTH",
+			"H": 60
+		},
+		{
+			"Id": "branchRect",
+			"Rgba": [49, 49, 16, 255],
+			"W": "WINDOW_WIDTH",
+			"H": 6
+		}
+	]
+}

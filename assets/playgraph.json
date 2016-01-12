@@ -1,0 +1,71 @@
+{
+	"Scenegraph": {
+		"Id": "root",
+		"Children": [
+			{
+				"Id": "ground",
+				"Asset": "groundRect",
+				"Y": "ALIGN_BOTTOM"
+			},
+			{
+				"Id": "branch",
+				"Asset": "branchRect",
+				"Y": 120
+			},
+			{
+				"Id": "chicken",
+				"Y": 5,
+				"Children": [
+					{
+						"Id": "chickenLeftContainer",
+						"Children": [
+							{
+								"Id": "chickenLeft",
+								"Asset": "chickenLeftImage"
+							},
+							{
+								"Id": "chickenLeftLegs",
+								"Asset": "chickenLeftLegsImage"
+							}
+						]
+					},
+					{
+						"Id": "chickenRightContainer",
+						"Children": [
+							{
+								"Id": "chickenRight",
+								"Asset": "chickenRightImage"
+							},
+							{
+								"Id": "chickenRightLegs",
+								"Asset": "chickenRightLegsImage"
+							}
+						]
+					}
+				]
+			},
+			{
+				"Id": "nest",
+				"Asset": "nestImage",
+				"Y": 473
+			},
+			{
+				"Id": "pauseMenu",
+				"Menu": {
+					"Visible": false,
+					"Font": "menuFont",
+					"Rgba": [255, 255, 255, 255],
+					"RgbaHigh": [255, 255, 0, 255],
+					"Items": [
+						{
+							"Text": "Return to Game"
+						},
+						{
+							"Text": "Main Menu"
+						}
+					]
+				}
+			}
+		]
+	}
+}
