@@ -113,7 +113,7 @@ func (ps *PlayState) positionNest(x int32) {
 	ps.nestEntity.X = x
 }
 
-// handleEventPlaying deals with paused events in the play state
+// handleEventPlaying deals with events in the play state
 func (ps *PlayState) handleEventPlaying(event *sdl.Event) bool {
 	switch event := (*event).(type) {
 	case *sdl.KeyDownEvent:
