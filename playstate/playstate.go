@@ -4,8 +4,6 @@
 package playstate
 
 import (
-	"fmt"
-
 	"github.com/beejjorgensen/eggdrop/gamemanager"
 	"github.com/beejjorgensen/eggdrop/menu"
 	"github.com/beejjorgensen/eggdrop/util"
@@ -98,15 +96,15 @@ func (ps *PlayState) loadAssets() {
 
 	am.LoadJSON("playassets.json")
 	/*
-		if err := am.LoadFont("menuFont", "assets/Osborne1.ttf", 40); err != nil {
-			panic(fmt.Sprintf("Playstate load font: %v", err))
+			if err := am.LoadFont("menuFont", "assets/Osborne1.ttf", 40); err != nil {
+				panic(fmt.Sprintf("Playstate load font: %v", err))
+			}
+
+		_, err := am.LoadSurface("nestImage", "assets/nest.png")
+		if err != nil {
+			panic(fmt.Sprintf("nest.png: %v", err))
 		}
 	*/
-
-	_, err := am.LoadSurface("nestImage", "assets/nest.png")
-	if err != nil {
-		panic(fmt.Sprintf("nest.png: %v", err))
-	}
 
 	ps.loadChicken()
 }

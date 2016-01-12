@@ -118,6 +118,60 @@ func (am *AssetManager) loadJSONFonts(jsonFile string, data interface{}) {
 	}
 }
 
+// loadJSONImages handles loading an Images array from the JSON
+func (am *AssetManager) loadJSONImages(jsonFile string, data interface{}) {
+	imageArray := data.([]interface{})
+
+	for _, v := range imageArray {
+		imageInfo := v.(map[string]interface{})
+
+		id, ok := imageInfo["Id"].(string)
+		if !ok {
+			loadJSONPanic(jsonFile, "", "Missing ID")
+		}
+
+		image, imageOk := imageInfo["Image"].(string)
+		src, srcOk := imageInfo["Src"].(string)
+
+		if imageOk {
+			// Load a normal image
+			_, err := am.LoadSurface(id, image)
+			if err != nil {
+				loadJSONPanic(jsonFile, id, "Error loading image")
+			}
+
+		} else if srcOk {
+			// Generate an image from existing with some transformation
+			if _, ok := am.Surfaces[src]; !ok {
+				loadJSONPanic(jsonFile, id, "Unknown Src")
+			}
+
+			transform, _ := imageInfo["Transform"]
+			switch transform {
+			//case "COPY":
+			case "FLIP_V":
+				newSurface, err := util.SurfaceFlipV(am.Surfaces[src])
+				if err != nil {
+					loadJSONPanic(jsonFile, id, "Error on vertical flip")
+				}
+				am.AddSurface(id, newSurface)
+			case "FLIP_H":
+				newSurface, err := util.SurfaceFlipH(am.Surfaces[src])
+				if err != nil {
+					loadJSONPanic(jsonFile, id, "Error on horizontal flip")
+				}
+				am.AddSurface(id, newSurface)
+			default:
+				loadJSONPanic(jsonFile, id, "Unrecognized Transform")
+			}
+
+		} else {
+			loadJSONPanic(jsonFile, id, "Must specify Image or Src")
+		}
+	}
+
+}
+
 // LoadJSON reads a JSON file and loads all the assets described therein
 func (am *AssetManager) LoadJSON(jsonFile string) error {
 	var err error
@@ -135,6 +189,9 @@ func (am *AssetManager) LoadJSON(jsonFile string) error {
 		switch k {
 		case "Fonts":
 			am.loadJSONFonts(jsonFile, v)
+
+		case "Images":
+			am.loadJSONImages(jsonFile, v)
 		}
 	}
 

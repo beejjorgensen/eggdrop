@@ -6,7 +6,7 @@
 		},
 		{
 			"Id": "chickenRightImage",
-			"Src": "chickenLeft",
+			"Src": "chickenLeftImage",
 			"Transform": "FLIP_H"
 		},
 		{
