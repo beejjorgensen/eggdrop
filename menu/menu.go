@@ -8,7 +8,6 @@ import (
 
 	"github.com/beejjorgensen/eggdrop/assetmanager"
 	"github.com/beejjorgensen/eggdrop/scenegraph"
-	"github.com/beejjorgensen/eggdrop/util"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -95,11 +94,11 @@ func New(am *assetmanager.AssetManager, id string, items []Item, spacing int32, 
 			entity.X = 0
 			entityHi.X = 0
 		case MenuJustifyCenter:
-			util.CenterEntityInParent(entity, menuEntity)
-			util.CenterEntityInParent(entityHi, menuEntity)
+			scenegraph.CenterEntityInParent(entity, menuEntity)
+			scenegraph.CenterEntityInParent(entityHi, menuEntity)
 		case MenuJustifyRight:
-			util.RightJustifyEntityInParent(entity, menuEntity)
-			util.RightJustifyEntityInParent(entityHi, menuEntity)
+			scenegraph.RightJustifyEntityInParent(entity, menuEntity)
+			scenegraph.RightJustifyEntityInParent(entityHi, menuEntity)
 		}
 	}
 

@@ -10,6 +10,24 @@
 			"Transform": "FLIP_H"
 		},
 		{
+			"Id": "chickenLeftLegs0Image",
+			"Image": "legs0.png"
+		},
+		{
+			"Id": "chickenLeftLegs1Image",
+			"Image": "legs1.png"
+		},
+		{
+			"Id": "chickenRightLegs0Image",
+			"Src": "chickenLeftLegs0Image",
+			"Transform": "FLIP_H"
+		},
+		{
+			"Id": "chickenRightLegs1Image",
+			"Src": "chickenLeftLegs1Image",
+			"Transform": "FLIP_H"
+		},
+		{
 			"Id": "nestImage",
 			"Image": "nest.png"
 		}
@@ -35,6 +53,12 @@
 			"Rgba": [49, 49, 16, 255],
 			"W": "WINDOW_WIDTH",
 			"H": 6
+		},
+		{
+			"Id": "pauseBGRect",
+			"Rgba": [0, 0, 0, 127],
+			"W": "WINDOW_WIDTH",
+			"H": "WINDOW_HEIGHT"
 		}
 	]
 }

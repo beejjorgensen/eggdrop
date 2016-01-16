@@ -233,9 +233,9 @@ func (am *AssetManager) renderJSONText(jsonFile string, data interface{}) {
 	}
 }
 
-// getWindowInfoFromString takes a string from the JSON that requests window
+// GetWindowInfoFromString takes a string from the JSON that requests window
 // size info and returns the proper size
-func (am *AssetManager) getWindowInfoFromString(s string) (int32, error) {
+func (am *AssetManager) GetWindowInfoFromString(s string) (int32, error) {
 	if am.outerSurface == nil {
 		return 0, errors.New("outerSurface not specified")
 	}
@@ -249,8 +249,38 @@ func (am *AssetManager) getWindowInfoFromString(s string) (int32, error) {
 	}
 }
 
-// parseRectDimension parses a W or H dimension out of a Rect Record
-func (am *AssetManager) parseRectDimension(jsonFile, id, dim string, info map[string]interface{}) int32 {
+// ParsePosition takes a string from the JSON that requests surface positioning
+// and returns that position.
+func (am *AssetManager) ParsePosition(jsonFile, id string, offset int32, dim string, info map[string]interface{}) int32 {
+	var rv int32
+
+	switch val := info[dim].(type) {
+	case float64:
+		rv = int32(val)
+	case string:
+		switch val {
+		case "ALIGN_WINDOW_BOTTOM":
+			windowH, err := am.GetWindowInfoFromString("WINDOW_HEIGHT")
+			if err != nil {
+				loadJSONPanic(jsonFile, id, fmt.Sprintf("%s: %v", val, err))
+			}
+			rv = windowH - offset
+		case "ALIGN_WINDOW_RIGHT":
+			windowW, err := am.GetWindowInfoFromString("WINDOW_WIDTH")
+			if err != nil {
+				loadJSONPanic(jsonFile, id, fmt.Sprintf("%s: %v", val, err))
+			}
+			rv = windowW - offset
+		default:
+			loadJSONPanic(jsonFile, id, fmt.Sprintf("%T: unknown parameter type", val))
+		}
+	}
+
+	return rv
+}
+
+// ParseDimension parses a W or H dimension out of a Rect Record
+func (am *AssetManager) ParseDimension(jsonFile, id, dim string, info map[string]interface{}) int32 {
 	var rv int32
 	var err error
 
@@ -258,12 +288,12 @@ func (am *AssetManager) parseRectDimension(jsonFile, id, dim string, info map[st
 	case float64:
 		rv = int32(val)
 	case string:
-		rv, err = am.getWindowInfoFromString(val)
+		rv, err = am.GetWindowInfoFromString(val)
 		if err != nil {
 			loadJSONPanic(jsonFile, id, fmt.Sprintf("%s: %v", val, err))
 		}
 	default:
-		loadJSONPanic(jsonFile, id, fmt.Sprintf("%t: unknown parameter type", val))
+		loadJSONPanic(jsonFile, id, fmt.Sprintf("%T: unknown parameter type", val))
 	}
 
 	return rv
@@ -294,8 +324,8 @@ func (am *AssetManager) renderJSONRects(jsonFile string, data interface{}) {
 
 		var width, height int32
 
-		width = am.parseRectDimension(jsonFile, id, "W", rectInfo)
-		height = am.parseRectDimension(jsonFile, id, "H", rectInfo)
+		width = am.ParseDimension(jsonFile, id, "W", rectInfo)
+		height = am.ParseDimension(jsonFile, id, "H", rectInfo)
 
 		surface, err := util.MakeFillSurfaceAlpha(width, height, color.R, color.G, color.B, color.A)
 		if err != nil {

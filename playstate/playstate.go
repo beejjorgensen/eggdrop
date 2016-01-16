@@ -4,9 +4,10 @@
 package playstate
 
 import (
+	"fmt"
+
 	"github.com/beejjorgensen/eggdrop/gamemanager"
 	"github.com/beejjorgensen/eggdrop/menu"
-	"github.com/beejjorgensen/eggdrop/util"
 
 	"github.com/beejjorgensen/eggdrop/assetmanager"
 	"github.com/beejjorgensen/eggdrop/gamecontext"
@@ -26,6 +27,8 @@ type PlayState struct {
 
 	menu *menu.Menu
 
+	entityByID map[string]*scenegraph.Entity
+
 	nestEntity *scenegraph.Entity
 }
 
@@ -39,47 +42,30 @@ func (ps *PlayState) Init() {
 	ps.assetManager = assetmanager.New()
 	ps.assetManager.SetOuterSurface(gamecontext.GContext.MainSurface)
 
-	ps.assetManager.LoadJSON("playassets.json")
+	err := ps.assetManager.LoadJSON("playassets.json")
+	if err != nil {
+		panic(fmt.Sprintf("playassets.json: %v", err))
+	}
 	ps.buildScene()
 }
 
 // buildScene constructs the necessary elements for the scene
 func (ps *PlayState) buildScene() {
+	var err error
+
 	am := ps.assetManager // asset manager
 
-	mainW := gamecontext.GContext.MainSurface.W
-	mainH := gamecontext.GContext.MainSurface.H
+	ps.rootEntity, err = scenegraph.LoadJSON(am, "playgraph.json", nil)
+	if err != nil {
+		panic(fmt.Sprintf("playgraph.json: %v", err))
+	}
 
-	ps.rootEntity = scenegraph.NewEntity(nil)
-	ps.rootEntity.W = mainW
-	ps.rootEntity.H = mainH
-
-	// Nest
-	ps.nestEntity = scenegraph.NewEntity(am.Surfaces["nestImage"])
-	ps.nestEntity.Y = 473
-	util.CenterEntityInParent(ps.nestEntity, ps.rootEntity)
+	//ps.nestEntity = ps.entityByID["nest"]
+	ps.nestEntity = ps.rootEntity.SearchByID("nest")
 
 	// Pause menu stuff
 	ps.buildPauseMenu()
-	util.CenterEntityInParent(ps.menu.RootEntity, ps.rootEntity)
-
-	// Ground
-	groundEntity := scenegraph.NewEntity(am.Surfaces["groundRect"])
-	groundEntity.Y = gamecontext.GContext.WindowHeight - 60
-
-	// Branch
-	branchEntity := scenegraph.NewEntity(am.Surfaces["branchRect"])
-	branchEntity.Y = 120
-
-	// Chicken
-	chickenLeftEntity := scenegraph.NewEntity(am.Surfaces["chickenLeftImage"])
-	chickenRightEntity := scenegraph.NewEntity(am.Surfaces["chickenRightImage"])
-	chickenRightEntity.X = 400
-
-	// Build scenegraph
-	ps.rootEntity.AddChild(chickenLeftEntity, chickenRightEntity)
-	ps.rootEntity.AddChild(groundEntity, branchEntity)
-	ps.rootEntity.AddChild(ps.nestEntity)
+	scenegraph.CenterEntityInParent(ps.menu.RootEntity, ps.rootEntity)
 	ps.rootEntity.AddChild(ps.pauseMenuEntity)
 }
 

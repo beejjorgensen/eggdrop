@@ -1,11 +1,13 @@
 {
 	"Scenegraph": {
 		"Id": "root",
+		"W": "WINDOW_WIDTH",
+		"H": "WINDOW_HEIGHT",
 		"Children": [
 			{
 				"Id": "ground",
 				"Asset": "groundRect",
-				"Y": "ALIGN_BOTTOM"
+				"Y": "ALIGN_WINDOW_BOTTOM"
 			},
 			{
 				"Id": "branch",
@@ -18,27 +20,24 @@
 				"Children": [
 					{
 						"Id": "chickenLeftContainer",
+						"Asset": "chickenLeftImage",
 						"Children": [
 							{
-								"Id": "chickenLeft",
-								"Asset": "chickenLeftImage"
-							},
-							{
 								"Id": "chickenLeftLegs",
-								"Asset": "chickenLeftLegsImage"
+								"Y": 100,
+								"Asset": "chickenLeftLegs0Image"
 							}
 						]
 					},
 					{
 						"Id": "chickenRightContainer",
+						"Visible": false,
+						"Asset": "chickenRightImage",
 						"Children": [
 							{
-								"Id": "chickenRight",
-								"Asset": "chickenRightImage"
-							},
-							{
 								"Id": "chickenRightLegs",
-								"Asset": "chickenRightLegsImage"
+								"Y": 100,
+								"Asset": "chickenRightLegs0Image"
 							}
 						]
 					}
@@ -51,20 +50,8 @@
 			},
 			{
 				"Id": "pauseMenu",
-				"Menu": {
-					"Visible": false,
-					"Font": "menuFont",
-					"Rgba": [255, 255, 255, 255],
-					"RgbaHigh": [255, 255, 0, 255],
-					"Items": [
-						{
-							"Text": "Return to Game"
-						},
-						{
-							"Text": "Main Menu"
-						}
-					]
-				}
+				"Asset": "pauseBGRect",
+				"Visible": false
 			}
 		]
 	}

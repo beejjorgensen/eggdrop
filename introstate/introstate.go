@@ -3,12 +3,13 @@
 package introstate
 
 import (
+	"fmt"
+
 	"github.com/beejjorgensen/eggdrop/assetmanager"
 	"github.com/beejjorgensen/eggdrop/gamecontext"
 	"github.com/beejjorgensen/eggdrop/gamemanager"
 	"github.com/beejjorgensen/eggdrop/menu"
 	"github.com/beejjorgensen/eggdrop/scenegraph"
-	"github.com/beejjorgensen/eggdrop/util"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -30,7 +31,11 @@ func (is *IntroState) Init() {
 
 	is.assetManager = assetmanager.New()
 
-	is.assetManager.LoadJSON("introassets.json")
+	err := is.assetManager.LoadJSON("introassets.json")
+	if err != nil {
+		panic(fmt.Sprintf("introassets.json: %v", err))
+	}
+
 	is.buildScene()
 }
 
@@ -53,7 +58,7 @@ func (is *IntroState) buildScene() {
 
 	is.menu = menu.New(am, "introMenu", menuItems, 60, menu.MenuJustifyCenter)
 
-	util.CenterEntityInParent(is.menu.RootEntity, rootEntity)
+	scenegraph.CenterEntityInParent(is.menu.RootEntity, rootEntity)
 	is.menu.RootEntity.Y = 200
 
 	rootEntity.AddChild(titleEntity, is.menu.RootEntity)
@@ -61,7 +66,7 @@ func (is *IntroState) buildScene() {
 	is.rootEntity = rootEntity
 
 	// position title
-	util.CenterEntityInSurface(titleEntity, gamecontext.GContext.MainSurface)
+	scenegraph.CenterEntityInSurface(titleEntity, gamecontext.GContext.MainSurface)
 	titleEntity.Y = 40
 
 }
