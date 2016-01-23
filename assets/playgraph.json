@@ -16,28 +16,51 @@
 			},
 			{
 				"Id": "chicken",
-				"Y": 5,
+				"Y": 3,
 				"Children": [
 					{
 						"Id": "chickenLeftContainer",
-						"Asset": "chickenLeftImage",
+						"Visible": false,
 						"Children": [
 							{
-								"Id": "chickenLeftLegs",
-								"Y": 100,
+								"Id": "chickenLeftLegs1",
+								"Y": 98,
+								"X": 23,
 								"Asset": "chickenLeftLegs0Image"
+							},
+							{
+								"Id": "chickenLeftLegs1",
+								"Y": 96,
+								"X": 20,
+								"Visible": false,
+								"Asset": "chickenLeftLegs1Image"
+							},
+							{
+								"Id": "chickenLeftImage",
+								"Asset": "chickenLeftImage"
 							}
 						]
 					},
 					{
 						"Id": "chickenRightContainer",
-						"Visible": false,
-						"Asset": "chickenRightImage",
+						"Visible": true,
 						"Children": [
 							{
-								"Id": "chickenRightLegs",
-								"Y": 100,
+								"Id": "chickenRightLegs1",
+								"Y": 98,
+								"X": 36,
+								"Visible": false,
 								"Asset": "chickenRightLegs0Image"
+							},
+							{
+								"Id": "chickenRightLegs1",
+								"Y": 96,
+								"X": 39,
+								"Asset": "chickenRightLegs1Image"
+							},
+							{
+								"Id": "chickenRightImage",
+								"Asset": "chickenRightImage"
 							}
 						]
 					}
