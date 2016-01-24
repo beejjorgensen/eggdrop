@@ -43,17 +43,22 @@ type PlayState struct {
 
 	menu *menu.Menu
 
-	entityByID map[string]*scenegraph.Entity
-
 	nestEntity          *scenegraph.Entity
+	chixEntity          *scenegraph.Entity
+	chixLeftEntity      *scenegraph.Entity
+	chixRightEntity     *scenegraph.Entity
 	interludeTextEntity *scenegraph.Entity
 
 	state stateInfo
 	level int
+
+	chix chixInfo
 }
 
 // Init initializes this gamestate
 func (ps *PlayState) Init() {
+	ps.initChix()
+
 	// Create colors
 	ps.bgColor = sdl.MapRGB(gamecontext.GContext.PixelFormat, 133, 187, 234)
 	ps.fontNormalColor = sdl.Color{R: 255, G: 255, B: 255, A: 255}
@@ -81,7 +86,15 @@ func (ps *PlayState) buildScene() {
 	}
 
 	ps.nestEntity = ps.rootEntity.SearchByID("nest")
+	ps.chixEntity = ps.rootEntity.SearchByID("chicken")
+	ps.chixLeftEntity = ps.rootEntity.SearchByID("chickenLeftContainer")
+	ps.chixRightEntity = ps.rootEntity.SearchByID("chickenRightContainer")
 	ps.interludeTextEntity = ps.rootEntity.SearchByID("interludeText")
+
+	// This is hackish, but we need to know the width of the chicken, and
+	// the chicken parent node is sizeless. So we copy the size from one of
+	// the children. This should probably be an option in the JSON reader.
+	ps.chixEntity.W = ps.rootEntity.SearchByID("chickenLeftImage").W
 
 	// Pause menu stuff
 	ps.buildPauseMenu()
@@ -174,7 +187,11 @@ func (ps *PlayState) updateState() {
 // frame
 func (ps *PlayState) update() {
 	ps.updateState()
-	// TODO update chicken, etc
+
+	switch ps.state.state {
+	case stateAction:
+		ps.updateChix()
+	}
 }
 
 // Render renders the intro state
@@ -209,6 +226,7 @@ func (ps *PlayState) setState(state int) {
 
 // WillShow is called just before this state begins
 func (ps *PlayState) WillShow() {
+	ps.resetChix()
 	ps.pause(false)
 	ps.level = 1
 	ps.setState(stateInterlude)
