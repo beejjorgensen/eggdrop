@@ -8,12 +8,28 @@ import (
 
 	"github.com/beejjorgensen/eggdrop/gamemanager"
 	"github.com/beejjorgensen/eggdrop/menu"
+	"github.com/beejjorgensen/eggdrop/util"
 
 	"github.com/beejjorgensen/eggdrop/assetmanager"
 	"github.com/beejjorgensen/eggdrop/gamecontext"
 	"github.com/beejjorgensen/eggdrop/scenegraph"
 	"github.com/veandco/go-sdl2/sdl"
 )
+
+const (
+	stateInterludeDuration       = 250  // ms
+	stateInterludeDurationLevel1 = 1000 // ms
+)
+
+const (
+	stateInterlude = iota
+	stateAction
+)
+
+type stateInfo struct {
+	state     int
+	startTime uint32
+}
 
 // PlayState holds information about the main game and pause menu
 type PlayState struct {
@@ -29,7 +45,11 @@ type PlayState struct {
 
 	entityByID map[string]*scenegraph.Entity
 
-	nestEntity *scenegraph.Entity
+	nestEntity          *scenegraph.Entity
+	interludeTextEntity *scenegraph.Entity
+
+	state stateInfo
+	level int
 }
 
 // Init initializes this gamestate
@@ -60,8 +80,8 @@ func (ps *PlayState) buildScene() {
 		panic(fmt.Sprintf("playgraph.json: %v", err))
 	}
 
-	//ps.nestEntity = ps.entityByID["nest"]
 	ps.nestEntity = ps.rootEntity.SearchByID("nest")
+	ps.interludeTextEntity = ps.rootEntity.SearchByID("interludeText")
 
 	// Pause menu stuff
 	ps.buildPauseMenu()
@@ -109,8 +129,11 @@ func (ps *PlayState) handleEventPlaying(event *sdl.Event) bool {
 		case sdl.K_ESCAPE, sdl.K_p:
 			ps.pause(true)
 		}
+
 	case *sdl.MouseMotionEvent:
-		ps.positionNest(event.X)
+		if ps.state.state == stateAction {
+			ps.positionNest(event.X)
+		}
 	}
 
 	return false
@@ -125,17 +148,71 @@ func (ps *PlayState) HandleEvent(event *sdl.Event) bool {
 	return ps.handleEventPlaying(event)
 }
 
+// updateState watches for internal state changes
+func (ps *PlayState) updateState() {
+	curTime := sdl.GetTicks()
+	diff := curTime - ps.state.startTime
+
+	switch ps.state.state {
+	case stateInterlude:
+		var duration uint32
+		switch ps.level {
+		case 1:
+			duration = stateInterludeDurationLevel1
+		default:
+			duration = stateInterludeDuration
+		}
+		if diff >= duration {
+			ps.setState(stateAction)
+		}
+	case stateAction:
+	}
+
+}
+
+// update handles the updating of entities, timers, time state changes, etc. per
+// frame
+func (ps *PlayState) update() {
+	ps.updateState()
+	// TODO update chicken, etc
+}
+
 // Render renders the intro state
 func (ps *PlayState) Render(mainWindowSurface *sdl.Surface) {
-	rootEntity := ps.rootEntity
+	ps.update()
 
 	mainWindowSurface.FillRect(nil, ps.bgColor)
-	rootEntity.Render(mainWindowSurface)
+
+	ps.interludeTextEntity.Visible = ps.state.state == stateInterlude
+
+	ps.rootEntity.Render(mainWindowSurface)
+}
+
+// constructInterludeImage builds the "LEVEL X" image
+func (ps *PlayState) constructInterludeImage() {
+	surface, err := util.RenderText(ps.assetManager.Fonts["interludeFont"], fmt.Sprintf("LEVEL %d", ps.level), sdl.Color{R: 255, G: 255, B: 0, A: 255})
+
+	if err != nil {
+		panic(fmt.Sprintf("Error constructing interlude text: %v", err))
+	}
+
+	ps.interludeTextEntity.Surface = surface
+	ps.interludeTextEntity.W = surface.W // hackishly make centering work on the next line
+	scenegraph.CenterEntityInParent(ps.interludeTextEntity, ps.rootEntity)
+}
+
+// setState sets the current states and does timer management
+func (ps *PlayState) setState(state int) {
+	ps.state.state = state
+	ps.state.startTime = sdl.GetTicks()
 }
 
 // WillShow is called just before this state begins
 func (ps *PlayState) WillShow() {
 	ps.pause(false)
+	ps.level = 1
+	ps.setState(stateInterlude)
+	ps.constructInterludeImage()
 
 	// call this to move on to the next transition state
 	gamemanager.GGameManager.WillShowComplete()
@@ -147,6 +224,7 @@ func (ps *PlayState) WillHide() {
 
 // DidShow is called just after this statebegins
 func (ps *PlayState) DidShow() {
+	gamemanager.GGameManager.SetEventMode(gamemanager.GameManagerPollDriven)
 }
 
 // DidHide is called just after this state ends

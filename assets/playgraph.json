@@ -72,6 +72,11 @@
 				"Y": 473
 			},
 			{
+				"Id": "interludeText",
+				"Visible": false,
+				"Y": 220
+			},
+			{
 				"Id": "pauseMenu",
 				"Asset": "pauseBGRect",
 				"Visible": false

@@ -35,6 +35,11 @@
 
 	"Fonts": [
 		{
+			"Id": "interludeFont",
+			"Font": "Osborne1.ttf",
+			"Size": 70
+		},
+		{
 			"Id": "menuFont",
 			"Font": "Osborne1.ttf",
 			"Size": 40
