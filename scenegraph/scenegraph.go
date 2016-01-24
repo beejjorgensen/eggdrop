@@ -131,11 +131,17 @@ func loadJSONRecursive(am *assetmanager.AssetManager, node map[string]interface{
 	if ok {
 		entity.H = am.ParseDimension(filename, id, "H", node)
 	}
+	assetName, ok := node["Asset"].(string)
+	if ok {
+		entity.Surface = am.Surfaces[assetName]
+		entity.W = entity.Surface.W
+		entity.H = entity.Surface.H
+	}
 
 	// Now do the rest of the properties
 	for k, v := range node {
 		switch k {
-		case "Id", "W", "H":
+		case "Id", "W", "H", "Asset":
 			// do nothing; handled above
 		case "X":
 			entity.X = am.ParsePosition(filename, id, entity.W, "X", node)
@@ -143,10 +149,6 @@ func loadJSONRecursive(am *assetmanager.AssetManager, node map[string]interface{
 			entity.Y = am.ParsePosition(filename, id, entity.H, "Y", node)
 		case "Visible":
 			entity.Visible = v.(bool)
-		case "Asset":
-			entity.Surface = am.Surfaces[v.(string)]
-			entity.W = entity.Surface.W
-			entity.H = entity.Surface.H
 		case "Children":
 			for _, child := range v.([]interface{}) {
 				childEntity = loadJSONRecursive(am, child.(map[string]interface{}), filename, entityByID)
