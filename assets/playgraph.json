@@ -23,7 +23,7 @@
 						"Visible": false,
 						"Children": [
 							{
-								"Id": "chickenLeftLegs1",
+								"Id": "chickenLeftLegs0",
 								"Y": 98,
 								"X": 23,
 								"Asset": "chickenLeftLegs0Image"
@@ -46,7 +46,7 @@
 						"Visible": true,
 						"Children": [
 							{
-								"Id": "chickenRightLegs1",
+								"Id": "chickenRightLegs0",
 								"Y": 98,
 								"X": 36,
 								"Visible": false,

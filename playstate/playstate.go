@@ -48,6 +48,7 @@ type PlayState struct {
 	chixLeftEntity      *scenegraph.Entity
 	chixRightEntity     *scenegraph.Entity
 	interludeTextEntity *scenegraph.Entity
+	chixLegEntity       []*scenegraph.Entity
 
 	state stateInfo
 	level int
@@ -89,6 +90,12 @@ func (ps *PlayState) buildScene() {
 	ps.chixEntity = ps.rootEntity.SearchByID("chicken")
 	ps.chixLeftEntity = ps.rootEntity.SearchByID("chickenLeftContainer")
 	ps.chixRightEntity = ps.rootEntity.SearchByID("chickenRightContainer")
+	ps.chixLegEntity = []*scenegraph.Entity{
+		ps.rootEntity.SearchByID("chickenLeftLegs0"),
+		ps.rootEntity.SearchByID("chickenLeftLegs1"),
+		ps.rootEntity.SearchByID("chickenRightLegs0"),
+		ps.rootEntity.SearchByID("chickenRightLegs1"),
+	}
 	ps.interludeTextEntity = ps.rootEntity.SearchByID("interludeText")
 
 	// This is hackish, but we need to know the width of the chicken, and

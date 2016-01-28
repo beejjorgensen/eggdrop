@@ -10,11 +10,14 @@ import (
 const (
 	chixInitAngleSpeed     = 0.001 // Higher is faster motion
 	chixInitAngleSpeedMult = 1.2   // How much higher to go each level, multiplier
+	chixFeetChangeDist     = 10    // How many pixels to move before changing feet
 )
 
 // chixInfo holds the chicken state
 type chixInfo struct {
 	pos, prevPos int32
+	footDist     int32
+	footNum      int
 	angleSpeed   float64
 	angle        float64
 }
@@ -28,6 +31,7 @@ func (ps *PlayState) initChix() {
 func (ps *PlayState) resetChix() {
 	ps.chix.pos = 0
 	ps.chix.prevPos = 0
+	ps.chix.footNum = 0
 	ps.chix.angleSpeed = chixInitAngleSpeed
 
 	// The chicken will be centered at multiples of 2π, so we choose one of 100000
@@ -53,9 +57,35 @@ func (ps *PlayState) updateChix() {
 
 	ps.chix.pos = posInt - ps.chixEntity.W/2
 
-	movingRight := ps.chix.pos > ps.chix.prevPos
+	// Show left or right chix
+	movingDist := ps.chix.pos - ps.chix.prevPos
+	movingRight := movingDist > 0
 	ps.chixLeftEntity.Visible = !movingRight
 	ps.chixRightEntity.Visible = movingRight
+
+	// Show feet 0 or feet 1
+	ps.chix.footDist += int32(math.Abs(float64(movingDist)))
+
+	if ps.chix.footDist > chixFeetChangeDist {
+		// next foot
+		ps.chix.footNum = (ps.chix.footNum + 1) % 2
+
+		switch ps.chix.footNum {
+		case 0: // Leg 0
+			ps.chixLegEntity[0].Visible = true  // left 0
+			ps.chixLegEntity[1].Visible = false // left 1
+			ps.chixLegEntity[2].Visible = true  // right 0
+			ps.chixLegEntity[3].Visible = false // right 1
+		case 1: // Leg 1
+			ps.chixLegEntity[0].Visible = false // left 0
+			ps.chixLegEntity[1].Visible = true  // left 1
+			ps.chixLegEntity[2].Visible = false // right 0
+			ps.chixLegEntity[3].Visible = true  // right 1
+		}
+
+		// reset
+		ps.chix.footDist = 0
+	}
 
 	ps.chixEntity.X = ps.chix.pos
 	ps.chix.prevPos = ps.chix.pos
