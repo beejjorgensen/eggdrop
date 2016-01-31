@@ -30,6 +30,10 @@
 		{
 			"Id": "nestImage",
 			"Image": "nest.png"
+		},
+		{
+			"Id": "eggImage",
+			"Image": "egg.png"
 		}
 	],
 

@@ -48,7 +48,11 @@ type PlayState struct {
 	chixLeftEntity      *scenegraph.Entity
 	chixRightEntity     *scenegraph.Entity
 	interludeTextEntity *scenegraph.Entity
+	eggContainer        *scenegraph.Entity
 	chixLegEntity       []*scenegraph.Entity
+
+	eggTimeSinceLaunch uint32
+	eggLaunchDelay     uint32
 
 	state stateInfo
 	level int
@@ -59,6 +63,7 @@ type PlayState struct {
 // Init initializes this gamestate
 func (ps *PlayState) Init() {
 	ps.initChix()
+	ps.initEggs()
 
 	// Create colors
 	ps.bgColor = sdl.MapRGB(gamecontext.GContext.PixelFormat, 133, 187, 234)
@@ -97,6 +102,7 @@ func (ps *PlayState) buildScene() {
 		ps.rootEntity.SearchByID("chickenRightLegs1"),
 	}
 	ps.interludeTextEntity = ps.rootEntity.SearchByID("interludeText")
+	ps.eggContainer = ps.rootEntity.SearchByID("eggContainer")
 
 	// This is hackish, but we need to know the width of the chicken, and
 	// the chicken parent node is sizeless. So we copy the size from one of
@@ -198,6 +204,7 @@ func (ps *PlayState) update() {
 	switch ps.state.state {
 	case stateAction:
 		ps.updateChix()
+		ps.updateEggs()
 	}
 }
 

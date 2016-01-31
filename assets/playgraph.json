@@ -15,6 +15,14 @@
 				"Y": 120
 			},
 			{
+				"Id": "nest",
+				"Asset": "nestImage",
+				"Y": 473
+			},
+			{
+				"Id": "eggContainer"
+			},
+			{
 				"Id": "chicken",
 				"Y": 3,
 				"Children": [
@@ -65,11 +73,6 @@
 						]
 					}
 				]
-			},
-			{
-				"Id": "nest",
-				"Asset": "nestImage",
-				"Y": 473
 			},
 			{
 				"Id": "interludeText",

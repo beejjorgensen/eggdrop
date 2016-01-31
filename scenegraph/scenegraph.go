@@ -28,7 +28,7 @@ type Entity struct {
 	EntityTransform
 	EntityToWorld, WorldToEntity EntityTransform
 	Surface                      *sdl.Surface
-	children                     []*Entity
+	Children                     []*Entity
 	Visible                      bool
 	ID                           string
 }
@@ -37,7 +37,7 @@ type Entity struct {
 func NewEntity(surface *sdl.Surface) *Entity {
 	e := &Entity{
 		Surface:  surface,
-		children: make([]*Entity, 0, initialChildrenCap),
+		Children: make([]*Entity, 0, initialChildrenCap),
 		Visible:  true,
 	}
 
@@ -53,20 +53,20 @@ func NewEntity(surface *sdl.Surface) *Entity {
 func (e *Entity) AddChild(childs ...*Entity) { // Tribute to Childs from The Thing
 	for _, c := range childs {
 		// TODO: Growth code could be optimized out of this loop
-		currentCap := cap(e.children)
-		if len(e.children) == currentCap {
+		currentCap := cap(e.Children)
+		if len(e.Children) == currentCap {
 			newChildren := make([]*Entity, currentCap, currentCap*2)
-			copy(newChildren, e.children)
-			e.children = append(newChildren, c)
+			copy(newChildren, e.Children)
+			e.Children = append(newChildren, c)
 		} else {
-			e.children = append(e.children, c)
+			e.Children = append(e.Children, c)
 		}
 	}
 }
 
 // GetChild returns a specific child by index
 func (e *Entity) GetChild(index int) *Entity {
-	return e.children[index]
+	return e.Children[index]
 }
 
 // Internal render call
@@ -88,7 +88,7 @@ func (e *Entity) renderRecursive(dest *sdl.Surface, t EntityTransform) {
 	t.X += e.X
 	t.Y += e.Y
 
-	for _, c := range e.children {
+	for _, c := range e.Children {
 		c.renderRecursive(dest, t)
 	}
 }
@@ -190,7 +190,7 @@ func (e *Entity) SearchByID(id string) *Entity {
 		return e
 	}
 
-	for _, child := range e.children {
+	for _, child := range e.Children {
 		found := child.SearchByID(id)
 		if found != nil {
 			return found

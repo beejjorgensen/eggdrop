@@ -64,7 +64,7 @@ func (am *AssetManager) SetOuterSurface(surface *sdl.Surface) {
 
 // LoadSurface loads and tracks a new image
 func (am *AssetManager) LoadSurface(key string, fileName string) (surface *sdl.Surface, err error) {
-	surface, err = img.Load(fileName)
+	surface, err = img.Load(AssetPath(fileName))
 	am.Surfaces[key] = surface
 
 	return
@@ -145,7 +145,7 @@ func (am *AssetManager) loadJSONImages(jsonFile string, data interface{}) {
 
 		if imageOk {
 			// Load a normal image
-			_, err := am.LoadSurface(id, AssetPath(image))
+			_, err := am.LoadSurface(id, image)
 			if err != nil {
 				loadJSONPanic(jsonFile, id, "Error loading image")
 			}

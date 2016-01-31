@@ -37,7 +37,7 @@ type GameManager struct {
 	nextModeID    int
 	modeMap       map[int]GameMode
 
-	FrameDelay   uint32
+	FrameDelay   uint32 // ms
 	EventTimeout int
 	eventMode    int
 

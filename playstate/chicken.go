@@ -20,6 +20,7 @@ type chixInfo struct {
 	footNum      int
 	angleSpeed   float64
 	angle        float64
+	Direction    int
 }
 
 // initChix creates an empty chicken state
@@ -62,6 +63,7 @@ func (ps *PlayState) updateChix() {
 	movingRight := movingDist > 0
 	ps.chixLeftEntity.Visible = !movingRight
 	ps.chixRightEntity.Visible = movingRight
+	ps.chix.Direction = int(movingDist)
 
 	// Show feet 0 or feet 1
 	ps.chix.footDist += int32(math.Abs(float64(movingDist)))
