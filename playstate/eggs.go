@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	eggStartingY = 30  // pixels
+	eggStartingY = 50  // pixels
 	eggSplatY    = 570 // pixels
 
 	eggSpeed0        = 250 // pixels per second

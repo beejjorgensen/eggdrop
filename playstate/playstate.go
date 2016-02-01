@@ -203,8 +203,10 @@ func (ps *PlayState) update() {
 
 	switch ps.state.state {
 	case stateAction:
-		ps.updateChix()
-		ps.updateEggs()
+		if !ps.paused {
+			ps.updateChix()
+			ps.updateEggs()
+		}
 	}
 }
 
