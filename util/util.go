@@ -9,6 +9,9 @@ import (
 	"github.com/veandco/go-sdl2/sdl_ttf"
 )
 
+var foo = make([][]byte, 10)
+var fooCount = 0
+
 // RenderText is a helper function to generate a surface with some text on it
 func RenderText(font *ttf.Font, text string, color sdl.Color) (*sdl.Surface, error) {
 	surface, err := font.RenderUTF8_Solid(text, color)
@@ -64,6 +67,11 @@ func surfaceManipulate(src *sdl.Surface, f func(src *sdl.Surface, srcWBytes, byt
 	pixelsDest := make([]byte, len(pixels))
 	bytesPP := int32(pf.BytesPerPixel)
 	bitsPP := int32(pf.BitsPerPixel)
+
+	// hackishly keep this from being garbage collected
+	// TODO: what's the Right Thing here?
+	foo[fooCount] = pixelsDest
+	fooCount++
 
 	srcWBytes := int32(src.W * bytesPP)
 
