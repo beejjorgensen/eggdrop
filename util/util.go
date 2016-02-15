@@ -2,15 +2,9 @@
 package util
 
 import (
-	"reflect"
-	"unsafe"
-
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/sdl_ttf"
 )
-
-var foo = make([][]byte, 10)
-var fooCount = 0
 
 // RenderText is a helper function to generate a surface with some text on it
 func RenderText(font *ttf.Font, text string, color sdl.Color) (*sdl.Surface, error) {
@@ -64,26 +58,23 @@ func surfaceManipulate(src *sdl.Surface, f func(src *sdl.Surface, srcWBytes, byt
 	pf := src.Format
 
 	pixels := src.Pixels()
-	pixelsDest := make([]byte, len(pixels))
 	bytesPP := int32(pf.BytesPerPixel)
 	bitsPP := int32(pf.BitsPerPixel)
 
-	// hackishly keep this from being garbage collected
-	// TODO: what's the Right Thing here?
-	foo[fooCount] = pixelsDest
-	fooCount++
+	newSurface, err := sdl.CreateRGBSurface(0, src.W, src.H, bitsPP, pf.Rmask, pf.Gmask, pf.Bmask, pf.Amask)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pixelsDest := newSurface.Pixels()
 
 	srcWBytes := int32(src.W * bytesPP)
 
 	// Perform the manipulation
 	f(src, srcWBytes, bytesPP, pixels, pixelsDest)
 
-	// We get the slice as a SliceHeader so we extract the .Data from it to
-	// pass to CreateRGBSurfaceFrom():
-	sh := (*reflect.SliceHeader)(unsafe.Pointer(&pixelsDest))
-
-	return sdl.CreateRGBSurfaceFrom(unsafe.Pointer(sh.Data), int(src.W), int(src.H), int(bitsPP), int(src.Pitch), pf.Rmask, pf.Gmask, pf.Bmask, pf.Amask)
-
+	return newSurface, nil
 }
 
 // SurfaceFlipH produces a new surface with a horizontally-flipped version of
