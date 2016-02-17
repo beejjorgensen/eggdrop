@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/beejjorgensen/eggdrop/aabb"
 	"github.com/beejjorgensen/eggdrop/assetmanager"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -30,6 +31,7 @@ type Entity struct {
 	Surface                      *sdl.Surface
 	Children                     []*Entity
 	Visible                      bool
+	MoveAABB                     aabb.AABB
 	ID                           string
 }
 
@@ -39,6 +41,7 @@ func NewEntity(surface *sdl.Surface) *Entity {
 		Surface:  surface,
 		Children: make([]*Entity, 0, initialChildrenCap),
 		Visible:  true,
+		MoveAABB: aabb.AABB{},
 	}
 
 	if surface != nil {
@@ -67,6 +70,22 @@ func (e *Entity) AddChild(childs ...*Entity) { // Tribute to Childs from The Thi
 // GetChild returns a specific child by index
 func (e *Entity) GetChild(index int) *Entity {
 	return e.Children[index]
+}
+
+// MoveTo updates an entity position, tracking the move AABB
+func (e *Entity) MoveTo(x, y int32) {
+	mab := &e.MoveAABB
+
+	mab.X0 = e.X
+	mab.Y0 = e.Y
+	mab.X1 = e.X + e.W
+	mab.Y1 = e.Y + e.H
+
+	mab.Expand(x, y)
+	mab.Expand(x+e.W, y+e.H)
+
+	e.X = x
+	e.Y = y
 }
 
 // Internal render call

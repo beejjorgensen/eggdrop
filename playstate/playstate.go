@@ -142,7 +142,11 @@ func (ps *PlayState) positionNest(x int32) {
 		x = maxX
 	}
 
-	ps.nestEntity.X = x
+	ps.nestEntity.MoveTo(x, ps.nestEntity.Y)
+
+	// Hackishly move the top of the nest AABB down a little to let the eggs
+	// penetrate farther before colliding
+	ps.nestEntity.MoveAABB.Y0 += 30
 }
 
 // handleEventPlaying deals with events in the play state
@@ -206,6 +210,8 @@ func (ps *PlayState) update() {
 		if !ps.paused {
 			ps.updateChix()
 			ps.updateEggs()
+
+			ps.testEggCollision()
 		}
 	}
 }

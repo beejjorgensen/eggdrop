@@ -16,7 +16,6 @@ const (
 	eggDelayPerLevel = 0.85 // multiple
 
 	eggLaunchXOffset = 80 // px
-
 )
 
 // initEggs initializes the egg subsystem. It sounds so important when I call it
@@ -100,11 +99,24 @@ func (ps *PlayState) updateEggs() {
 	// This could be improved for efficiency.
 	for _, egg := range ps.eggContainer.Children {
 		if egg.Visible {
-			egg.Y += dY
+			egg.MoveTo(egg.X, egg.Y+dY)
 
 			if egg.Y > eggSplatY {
 				egg.Visible = false
 			}
 		}
 	}
+}
+
+// testEggCollision looks for collisions with the eggs and nest
+func (ps *PlayState) testEggCollision() {
+	for _, egg := range ps.eggContainer.Children {
+		if egg.Visible {
+			if egg.MoveAABB.TestCollision(&ps.nestEntity.MoveAABB) {
+				egg.Visible = false
+				//fmt.Printf("Hit!\n%#v\n%#v\n", egg.MoveAABB, ps.nestEntity.MoveAABB)
+			}
+		}
+	}
+
 }
