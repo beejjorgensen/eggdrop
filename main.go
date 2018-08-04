@@ -11,8 +11,8 @@ import (
 	"github.com/beejjorgensen/eggdrop/playstate"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/sdl_image"
-	"github.com/veandco/go-sdl2/sdl_ttf"
+	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 func init() {
@@ -45,7 +45,7 @@ func createMainWindow() {
 	gc.WindowWidth = 800
 	gc.WindowHeight = 600
 
-	mainWindow, err = sdl.CreateWindow("Eggdrop!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int(gc.WindowWidth), int(gc.WindowHeight), sdl.WINDOW_SHOWN)
+	mainWindow, err = sdl.CreateWindow("Eggdrop!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, gc.WindowWidth, gc.WindowHeight, sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
 	}

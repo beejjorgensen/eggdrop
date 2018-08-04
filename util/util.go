@@ -3,12 +3,12 @@ package util
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/sdl_ttf"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 // RenderText is a helper function to generate a surface with some text on it
 func RenderText(font *ttf.Font, text string, color sdl.Color) (*sdl.Surface, error) {
-	surface, err := font.RenderUTF8_Solid(text, color)
+	surface, err := font.RenderUTF8Solid(text, color)
 
 	return surface, err
 }

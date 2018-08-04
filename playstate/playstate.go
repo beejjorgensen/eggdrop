@@ -152,7 +152,7 @@ func (ps *PlayState) positionNest(x int32) {
 // handleEventPlaying deals with events in the play state
 func (ps *PlayState) handleEventPlaying(event *sdl.Event) bool {
 	switch event := (*event).(type) {
-	case *sdl.KeyDownEvent:
+	case *sdl.KeyboardEvent:
 		//fmt.Printf("Key: %#v\n", event)
 		switch event.Keysym.Sym {
 

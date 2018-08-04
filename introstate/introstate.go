@@ -87,7 +87,7 @@ func (is *IntroState) handleMenuItem(i int) bool {
 func (is *IntroState) HandleEvent(event *sdl.Event) bool {
 
 	switch event := (*event).(type) {
-	case *sdl.KeyDownEvent:
+	case *sdl.KeyboardEvent:
 		//fmt.Printf("Key: %#v\n", event)
 		switch event.Keysym.Sym {
 

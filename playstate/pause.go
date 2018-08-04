@@ -71,7 +71,7 @@ func (ps *PlayState) pause(paused bool) {
 // handleEventPaused deals with paused events in the paused state
 func (ps *PlayState) handleEventPaused(event *sdl.Event) bool {
 	switch event := (*event).(type) {
-	case *sdl.KeyDownEvent:
+	case *sdl.KeyboardEvent:
 		//fmt.Printf("Key: %#v\n", event)
 		switch event.Keysym.Sym {
 
